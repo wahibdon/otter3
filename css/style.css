@@ -1,0 +1,129 @@
+@font-face {
+	font-family: 'Myriad Pro';
+	src: url('/fonts/MyriadPro-Regular.woff2') format('woff2');
+	font-style:   normal;
+	font-weight:  400;
+}
+@font-face {
+	font-family: 'Myriad Pro';
+	src: url('/fonts/MyriadPro-Light.woff2') format('woff');
+	font-style:   normal;
+	font-weight:  300;
+}
+@font-face {
+	font-family: 'Myriad Pro';
+	src: url('/fonts/MyriadPro-Semibold.woff2') format('woff');
+	font-style:   normal;
+	font-weight:  600;
+}
+
+* {
+	position: relative;
+	font-family: 'Myriad Pro';
+}
+body {
+	margin: 0 0 50px;
+	background-color: #ddd;
+}
+#otter{
+	max-width: 960px;
+	margin: 50px auto 0;
+}
+#otter > div {display: none;}
+ul {
+	margin: 0;
+	padding: 0;
+}
+ul#navigation {
+	position: fixed;
+	top: 0;
+	z-index: 100;
+	width: 100%;
+	background-color: #999;
+	font-size: 20px;
+	text-align: center;
+}
+ul#navigation > li {
+	display: inline-block;
+	vertical-align: middle;
+	padding: 0 10px;
+	height: 32px;
+}
+ul#navigation > li:hover {
+	background-color: #777;
+}
+ul#navigation > li > a {
+	color: #fff;
+	text-decoration: none;
+}
+ul#navigation > li > ul {
+	height: 0px;
+	overflow: hidden;
+	transition: height .5s;
+	position: absolute;
+	padding: 0;
+	top: 32px;
+	text-align: left;
+	margin-left: -10px;
+	min-width: 100%;
+}
+ul#navigation > li > ul a {
+	text-decoration: none;
+	color: #000;
+	display: block;
+}
+ul#navigation > li:hover > ul {
+	height: 120px;
+}
+ul#navigation > li > ul > li {
+	list-style-type: none;
+	white-space: nowrap;
+	border-style: solid;
+	border-color: #aaa;
+	border-width: 0 1px 1px;
+	padding: 5px;
+	background-color: #fff;
+	font-size: 16px;
+}
+ul#navigation > li > ul > li:hover {
+	background-color: #ccc;
+}
+#clients > ul, #vendors > ul {
+	margin-right: 5px;
+	height: 85vh;
+	overflow-y: auto;
+	position: fixed;
+	width: 370px;
+}
+#otter li {
+	list-style-type: none;
+	padding: 5px 35px 5px 5px;
+	border-color: #aaa;
+	border-style: solid;
+	border-width: 1px 1px 0;
+	background-color: #fff;
+}
+#otter li:last-child{
+	border-bottom-width: 1px;
+}
+#otter li a {
+	text-decoration: none;
+	color: #000;
+}
+#otter li a:hover{
+	text-decoration: underline;
+}
+#otter li span {
+	position: absolute;
+	right: 5px;
+	top: 5px;
+}
+#otter li a:hover, #otter li span {
+	color: #c00;
+}
+#clients > a {
+	background-color: #c00;
+	color: #fff;
+	text-decoration: none;
+	padding: 5px 10px;
+}

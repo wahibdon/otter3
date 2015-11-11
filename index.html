@@ -2,8 +2,184 @@
 <html>
 <head>
 	<title></title>
+	<link rel="stylesheet" type="text/css" href="/css/style.css">
+	<script type="text/javascript" src="/js/lib.js"></script>
+	<style type="text/css">
+	</style>
 </head>
 <body>
 
+<ul id="navigation">
+	<li><img src="/images/otter-logo.gif"></li>
+	<li>
+		<a href="#" class="active">my stuff</a>
+		<ul>
+			<li><a href="#">tasks</a></li>
+			<li><a href="#time">time card</a></li>
+			<li><a href="#time/add">add time</a></li>
+		</ul>
+	</li>
+	<li>
+		<a href="#projects">projects</a>
+		<ul>
+			<li><a href="#projects/add">add project</a></li>
+			<li><a href="#projects/open">open projects</a></li>
+			<li><a href="#projects/closed">closed projects</a></li>
+			<li><a href="#projects/onhold">on-hold projects</a></li>
+		</ul>
+	</li>
+	<li>
+		<a href="#team">team</a>
+		<ul>
+			<li><a href="#tasks/team">team tasks</a></li>
+			<li><a href="#tasks/unassigned">unassigned tasks</a></li>
+		</ul>
+	</li>
+	<li><a href="#blog">blog</a></li>
+	<li><a href="#reports">reports</a></li>
+	<li><a href="#clients">clients</a></li>
+	<li><a href="#vendors">vendors</a></li>
+	<li><a href="#credentials">credentials</a></li>
+	<li><a href="#logout">logout</a></li>
+</ul>
+
+<div id="otter">
+
+	<div id="index"></div>
+
+	<div id="clients">
+		
+	</div>
+
+	<div id="vendors">
+
+	</div>
+
+</div>
+
+<script type="text/javascript">
+	window.hash = window.location.hash.substring(1).split('/')[0];
+
+
+	var routes = [];
+	routes[''] = index;
+	routes['clients'] = getClients;
+	routes['vendors'] = getVendors;
+
+	router(routes, window.hash);
+
+	function router(routes, route){
+		routes[route]();
+	}
+	setInterval(function(){
+		if (window.hash != window.location.hash.substring(1).split('/')[0]){
+			window.hash = window.location.hash.substring(1).split('/')[0];
+			router(routes, window.hash);
+		}
+	}, 250);
+
+	function index(){
+		showRoute('index');
+	}
+	function getClients(){
+		xhr('/api/php-api.php?call=list-clients', function(response){
+			showRoute('clients');
+			var client, list = buildClientVendor(['name', 'abbr'], response);
+			removeOldUL('clients');
+			document.getElementById('clients').appendChild(list);
+			/*if ((client = window.location.hash.substring(1).split('/')[1]) != undefined){
+				showClient(client);
+			}*/
+		});
+	}
+
+	function removeOldUL(type){
+		var oldul;
+		if(oldul = document.querySelectorAll("#"+type+" > ul")){
+			for(var i=0; i<oldul.length; i++){
+				oldul[i].parentNode.removeChild(oldul[i]);
+			}
+		}
+	}
+
+	function getVendors(){
+		xhr('/api/php-api.php?call=list-vendors', function(response){
+			showRoute('vendors');
+			var vendor, list = buildClientVendor(['name'], response);
+			removeOldUL('vendors');
+			document.getElementById('vendors').appendChild(list);
+			/*if ((vendor = window.location.hash.substring(1).split('/')[1]) != undefined){
+				showVendor(vendor);
+			}*/
+		});
+	}
+
+	function showClient(client_id){
+		//
+	}
+
+	function showVendor(vendor_id){
+		//
+	}
+
+	function buildClientVendor(listKeys, response){
+		var ul = document.createElement('ul');
+		var li, span;
+		for(var i=0; i<response.length; i++){
+			li = document.createElement('li');
+			li.appendChild(document.createTextNode(response[i][listKeys[0]]));
+			if(listKeys[1] != undefined){
+				span = document.createElement('span');
+				span.appendChild(document.createTextNode(response[i][listKeys[1]]));
+				li.appendChild(span);
+			}
+			ul.appendChild(li);
+		}
+		return ul;
+	}
+
+	function showRoute(route){
+		var routes = document.querySelectorAll('#otter > div');
+		for(var i=0; i<routes.length; i++){
+			if (routes[i].id == route){
+				routes[i].style.display = "block";
+				continue;
+			}
+			routes[i].style.display = "none";
+		}
+	}
+
+	//simple xhr abstraction.
+	function xhr(url, callback, type, params) {
+		type = type || "get";
+		var xhr = new XMLHttpRequest();
+		xhr.open(type, url);
+		xhr.onreadystatechange = function(){
+			if(this.readyState == 4 && this.status == 200){
+				callback(JSON.parse(this.responseText));
+			}
+		}
+		xhr.send(params);
+	}
+	//empty out an element
+	function emptyElement(element){
+		var child, reserve = [];
+		while (element.lastChild){
+			try{
+				child = element.lastChild.classList.contains('no-hide');
+				if (child){
+					reserve.push(element.lastChild);
+				}
+				element.removeChild(element.lastChild);
+				child = false;
+			}catch(e){
+				console.log(e)
+				element.removeChild(element.lastChild);
+			}
+		}
+		for (e in reserve)
+			element.appendChild(reserve[e]);
+	}
+</script>
 </body>
 </html>
