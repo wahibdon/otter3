@@ -208,3 +208,36 @@ p.notes {
 	border-right: 1px solid #fff;
 	cursor: pointer;
 }
+#job-search {
+	float: right;
+	padding: 20px;
+	background-color: #999;
+	width: 90%;
+	box-sizing: border-box;
+	border: 1px solid #000;
+}
+#job-search select {
+	width: 7%;
+    border: 0;
+	height: 18px;
+	border-right: 1px solid #999;
+	border-radius: 4px 0 0 4px;
+	background-color: #ddd;
+}
+#job-search input {
+	width: 86%;
+	border: 0;
+	padding: 0;
+	height: 18px;
+}
+#job-search input:focus, #job-search button:focus, #job-search select:focus {
+	outline: none;
+}
+#job-search button {
+	width: 7%;
+	height: 18px;
+	border: 0;
+	border-radius: 0 4px 4px 0;
+	background-color: #ddd;
+	border-left: 1px solid #999;
+}
