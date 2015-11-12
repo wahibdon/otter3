@@ -8,6 +8,25 @@ switch ($call){
 	case 'list-clients':
 		echo json_encode(listTable("clients"));
 	break;
+	case 'show-contact-vendor':
+		switch ($_GET['type']) {
+			case 'vendors':
+				$table = 'vendor_contact';
+				$col = 'vendor_id';
+				break;
+			case 'clients':
+				$table = 'client_contact';
+				$col = 'client_id';
+				break;
+			default:
+				die();
+				break;
+		}
+		$stmt = $db->prepare("select * from $table where $col = :id");
+		$stmt->bindParam(":id", $_GET['id']);
+		$stmt->execute();
+		echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
+	break;
 	default:
 		echo json_encode("false");
 	break;

@@ -20,12 +20,12 @@
 		</ul>
 	</li>
 	<li>
-		<a href="#projects">projects</a>
+		<a href="#jobs">jobs</a>
 		<ul>
-			<li><a href="#projects/add">add project</a></li>
-			<li><a href="#projects/open">open projects</a></li>
-			<li><a href="#projects/closed">closed projects</a></li>
-			<li><a href="#projects/onhold">on-hold projects</a></li>
+			<li><a href="#jobs/add">add job</a></li>
+			<li><a href="#jobs/open">open jobs</a></li>
+			<li><a href="#jobs/closed">closed jobs</a></li>
+			<li><a href="#jobs/onhold">on-hold jobs</a></li>
 		</ul>
 	</li>
 	<li>
@@ -55,6 +55,30 @@
 
 	</div>
 
+	<div id="jobs">
+		<div id="page-nav">
+			<ul>
+				<li>All</li>
+				<li>Open</li>
+				<li>Closed</li>
+				<li>On-Hold</li>
+			</ul>
+			<ul>
+				<li>Add Job</li>
+			</ul>
+		</div>
+		<div>
+			<div>
+				<select>
+					<option>All</option>
+					<option>Job &num;</option>
+					<option>Title</option>
+				</select>
+				<input type="text">
+			</div>
+		</div>
+	</div>
+
 </div>
 
 <script type="text/javascript">
@@ -65,6 +89,7 @@
 	routes[''] = index;
 	routes['clients'] = getClients;
 	routes['vendors'] = getVendors;
+	routes['jobs'] = showJobs;
 
 	router(routes, window.hash);
 
@@ -81,6 +106,11 @@
 	function index(){
 		showRoute('index');
 	}
+
+	function showJobs(){
+		showRoute('jobs');
+	}
+
 	function getClients(){
 		xhr('/api/php-api.php?call=list-clients', function(response){
 			showRoute('clients');
@@ -114,12 +144,54 @@
 		});
 	}
 
-	function showClient(client_id){
-		//
-	}
-
-	function showVendor(vendor_id){
-		//
+	function showClientVendor(e){
+		var row = e.target.row;
+		xhr('/api/php-api.php?call=show-contact-vendor&type='+window.hash+'&id='+e.target.dataset.id, function (response) {
+			try{
+				var old = document.getElementById(window.hash+'info');
+				old.parentNode.removeChild(old);
+			}catch(e){
+				//
+			}
+			var main_div = document.createElement('div'),
+			name = document.createElement('h2'),
+			type_abbr = document.createElement('h3'),
+			notes = document.createElement('p'),
+			address = document.createElement('address'), assemble_addr='';
+			main_div.classList.add('client-vendor-information');
+			main_div.id = window.hash+"info";
+			main_div.appendChild(name);
+			main_div.appendChild(type_abbr);
+			main_div.appendChild(address);
+			main_div.appendChild(notes);
+			notes.classList.add('notes');
+			document.getElementById(window.hash).appendChild(main_div);
+			name.appendChild(document.createTextNode(row.name));
+			if (row.type)
+				type_abbr.appendChild(document.createTextNode(row.type));
+			else
+				type_abbr.appendChild(document.createTextNode(row.abbr));
+			assemble_addr+=row.address+"<br>";
+			if(row.address2 != '')
+				assemble_addr+=row.address2+"<br>";
+			assemble_addr+=row.city+"<br>"+row.state+"<br>"+row.zip;
+			if(row.phone)
+				assemble_addr+="<br>"+row.phone;
+			address.innerHTML = assemble_addr;
+			if(row.notes)
+				notes.innerHTML=row.notes;
+			var div = document.createElement('div');
+			div.classList.add('contact-list');
+			var p, contact = "";
+			for (var i=0; i<response.length; i++){
+				p = document.createElement('p');
+				contact += response[i].first+"<br>"+response[i].last+"<br>"+response[i].title+"<br>"+response[i].email+"<br>"+response[i].mobile+"<br>"+response[i].office+"<br>"+response[i].ext;
+				p.innerHTML = contact;
+				div.appendChild(p);
+				contact = "";
+			}
+			main_div.appendChild(div);
+		});
 	}
 
 	function buildClientVendor(listKeys, response){
@@ -128,6 +200,9 @@
 		for(var i=0; i<response.length; i++){
 			li = document.createElement('li');
 			li.appendChild(document.createTextNode(response[i][listKeys[0]]));
+			li.dataset.id = response[i].id;
+			li.row = response[i];
+			li.addEventListener('click', showClientVendor);
 			if(listKeys[1] != undefined){
 				span = document.createElement('span');
 				span.appendChild(document.createTextNode(response[i][listKeys[1]]));
