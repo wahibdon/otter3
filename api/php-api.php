@@ -4,11 +4,11 @@ $call = $_GET['call'];
 switch ($call){
 	case 'list-vendors':
 		echo json_encode(listTable("vendors"));
-	break;
+		break;
 	case 'list-clients':
 		echo json_encode(listTable("clients"));
 	break;
-	case 'show-contact-vendor':
+		case 'show-contact-vendor':
 		switch ($_GET['type']) {
 			case 'vendors':
 				$table = 'vendor_contact';
@@ -26,10 +26,15 @@ switch ($call){
 		$stmt->bindParam(":id", $_GET['id']);
 		$stmt->execute();
 		echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
-	break;
+		break;
+	case 'job-search':
+		$stmt = $db->prepare("select jobs.*, abbr, users.first, users.last from jobs left join clients on jobs.client_id = clients.id left join users on users.id = jobs.creator order by id DESC");
+		$stmt->execute();
+		echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
+		break;
 	default:
 		echo json_encode("false");
-	break;
+		break;
 }
 function listTable($table){
 	global $db;

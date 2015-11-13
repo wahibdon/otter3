@@ -6,6 +6,33 @@
 	<script type="text/javascript" src="/js/lib.js"></script>
 	<style type="text/css">
 	</style>
+	<script type="text/javascript">
+		const JBILLING = [
+			null,
+			'Pending',
+			'Final Billing',
+			'Non Billable',
+			'Monthly Billing',
+			'Retainer',
+			'Progress Billing',
+			'Billable'
+		]
+		const JSTATUS = [
+			null,
+			'Open',
+			'On-Hold',
+			'Closed'
+		]
+		const JTYPE = [
+			null,
+			'Audio',
+			'Media',
+			'Print',
+			'Video',
+			'Web',
+			'Other'
+		]
+	</script>
 </head>
 <body>
 
@@ -81,7 +108,6 @@
 <script type="text/javascript">
 	window.hash = window.location.hash.substring(1).split('/')[0];
 
-
 	var routes = [];
 	routes[''] = index;
 	routes['clients'] = getClients;
@@ -106,6 +132,33 @@
 
 	function showJobs(){
 		showRoute('jobs');
+		xhr('/api/php-api.php?call=job-search', function(response){
+			try{
+				var oldul = document.getElementById('search-results');
+				oldul.parentNode.removeChild(oldul);
+			}catch(e){
+				//
+			}
+			console.log(response.length);
+			console.log(response);
+			var ul = document.createElement('ul');
+			ul.id = "search-results";
+			var li, bstatus, number_title, jstatus_creator;
+			for(var i=0; i<response.length; i++){
+				li = document.createElement('li');
+				bstatus = document.createElement('span');
+				number_title = document.createElement('h2');
+				jstatus_creator = document.createElement('h3');
+				li.appendChild(bstatus);
+				li.appendChild(number_title);
+				li.appendChild(jstatus_creator);
+				ul.appendChild(li);
+				bstatus.innerHTML = JBILLING[response[i].billing_status];
+				number_title.innerHTML = "<em>"+response[i].abbr+response[i].number+"</em> | "+response[i].title;
+				jstatus_creator.innerHTML = "<em>Job Status</em> "+JSTATUS[response[i].job_status]+" <em>Creator</em> "+response[i].first+" "+response[i].last;
+			}
+			document.getElementById('jobs').appendChild(ul);
+		});
 	}
 
 	function getClients(){

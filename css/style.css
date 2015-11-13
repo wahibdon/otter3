@@ -196,6 +196,10 @@ p.notes {
 #page-nav {
 	float: left;
 }
+#page-nav > ul + ul {
+	border-top: 1px solid #999;
+	padding-top: 5px;
+}
 #page-nav li {
 	background-color: #bbb;
 	padding: 5px 10px;
@@ -215,6 +219,7 @@ p.notes {
 	width: 90%;
 	box-sizing: border-box;
 	border: 1px solid #000;
+	margin-bottom: 20px;
 }
 #job-search select {
 	width: 7%;
@@ -240,4 +245,8 @@ p.notes {
 	border-radius: 0 4px 4px 0;
 	background-color: #ddd;
 	border-left: 1px solid #999;
+}
+#jobs > ul {
+	float: right;
+	width: 90%;
 }
