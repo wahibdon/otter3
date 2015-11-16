@@ -130,9 +130,11 @@
 		showRoute('index');
 	}
 
-	function showJobs(){
+	function showJobs(page){
+		if (!page)
+			page = 1;
 		showRoute('jobs');
-		xhr('/api/php-api.php?call=job-search', function(response){
+		xhr('/api/php-api.php?call=job-search&page='+page, function(response){
 			try{
 				var oldul = document.getElementById('search-results');
 				oldul.parentNode.removeChild(oldul);
