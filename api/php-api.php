@@ -32,7 +32,7 @@ switch ($call){
 			break;
 		$lower = ($_GET['page']-1)*50;
 		$upper = $_GET['page']*50;
-		$stmt = $db->prepare("select jobs.*, abbr, users.first, users.last from jobs left join clients on jobs.client_id = clients.id left join users on users.id = jobs.creator order by id DESC limit ?");
+		$stmt = $db->prepare("select jobs.*, abbr, users.first, users.last from jobs left join clients on jobs.client_id = clients.id left join users on users.id = jobs.creator order by id DESC limit ?,?");
 		$stmt->bindValue(1, $lower, PDO::PARAM_INT);
 		$stmt->bindValue(2, $upper, PDO::PARAM_INT);
 		$stmt->execute();
