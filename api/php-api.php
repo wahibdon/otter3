@@ -30,10 +30,11 @@ switch ($call){
 	case 'job-search':
 		if(!isset($_GET['page']))
 			break;
-		$tmp = 50;
+		$lower = ($_GET['page']-1)*50;
+		$upper = $_GET['page']*50;
 		$stmt = $db->prepare("select jobs.*, abbr, users.first, users.last from jobs left join clients on jobs.client_id = clients.id left join users on users.id = jobs.creator order by id DESC limit ?");
-		$stmt->bindValue(1, $tmp, PDO::PARAM_INT);
-		//$stmt->bindValue(2, 50, PDO::PARAM_INT);
+		$stmt->bindValue(1, $lower, PDO::PARAM_INT);
+		$stmt->bindValue(2, $upper, PDO::PARAM_INT);
 		$stmt->execute();
 		//print_r($db->errorInfo());
 		echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
