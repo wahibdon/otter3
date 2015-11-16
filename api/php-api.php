@@ -36,7 +36,7 @@ switch ($call){
 		$stmt->bindValue(1, $lower, PDO::PARAM_INT);
 		$stmt->bindValue(2, $upper, PDO::PARAM_INT);
 		$stmt->execute();
-		echo "$lower \n $upper\n\n"
+		//echo "$lower \n $upper\n\n";
 		//print_r($db->errorInfo());
 		echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
 		break;
