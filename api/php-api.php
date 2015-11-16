@@ -30,7 +30,7 @@ switch ($call){
 	case 'job-search':
 		if(!isset($_GET['page']))
 			break;
-		$stmt = $db->prepare("select jobs.*, abbr, users.first, users.last from jobs left join clients on jobs.client_id = clients.id left join users on users.id = jobs.creator order by id DESC limit 0,50");
+		$stmt = $db->prepare("select jobs.*, abbr, users.first, users.last from jobs left join clients on jobs.client_id = clients.id left join users on users.id = jobs.creator order by id DESC limit :lower, :upper");
 		$stmt->bindValue(':lower', 0);
 		$stmt->bindValue(':upper', 50);
 		$stmt->execute();
