@@ -28,7 +28,11 @@ switch ($call){
 		echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
 		break;
 	case 'job-search':
-		$stmt = $db->prepare("select jobs.*, abbr, users.first, users.last from jobs left join clients on jobs.client_id = clients.id left join users on users.id = jobs.creator order by id DESC");
+		if(!isset($_GET['page']))
+			break;
+		$stmt = $db->prepare("select jobs.*, abbr, users.first, users.last from jobs left join clients on jobs.client_id = clients.id left join users on users.id = jobs.creator order by id DESC limit :lower, :upper");
+		$stmt->bindValue(':lower', ($_GET['page']-1)*50);
+		$stmt->bindValue(':upper', $_GET['page']*50);
 		$stmt->execute();
 		echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
 		break;
