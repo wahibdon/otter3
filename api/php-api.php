@@ -31,7 +31,7 @@ switch ($call){
 		if(!isset($_GET['page']))
 			break;
 		$stmt = $db->prepare("select jobs.*, abbr, users.first, users.last from jobs left join clients on jobs.client_id = clients.id left join users on users.id = jobs.creator order by id DESC limit ?");
-		$stmt->bindValue(1, 0, PDO::PARAM_INT);
+		$stmt->bindValue(1, 2, PDO::PARAM_INT);
 		//$stmt->bindValue(2, 50, PDO::PARAM_INT);
 		$stmt->execute();
 		print_r($db->errorInfo());
