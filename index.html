@@ -85,10 +85,10 @@
 	<div id="jobs">
 		<div id="page-nav">
 			<ul>
-				<li>All</li>
-				<li>Open</li>
-				<li>Closed</li>
-				<li>On-Hold</li>
+				<li data-link="0" class="job-search">All</li>
+				<li data-link="1" class="job-search">Open</li>
+				<li data-link="3" class="job-search">Closed</li>
+				<li data-link="2" class="job-search">On-Hold</li>
 			</ul>
 			<ul>
 				<li>Add Job</li>
@@ -107,6 +107,13 @@
 
 <script type="text/javascript">
 	window.hash = window.location.hash.substring(1).split('/')[0];
+	var search_links = document.getElementsByClassName('job-search');
+	for(var i=0; i<search_links.length; i++){
+		search_links[i].addEventListener('click', function(e){
+			window.location.hash = window.hash + "/" + e.target.dataset.link;
+			showJobs();
+		})
+	}
 
 	var routes = [];
 	routes[''] = index;
@@ -118,6 +125,7 @@
 
 	function router(routes, route){
 		routes[route]();
+		document.body.scrollTop = 0;
 	}
 	setInterval(function(){
 		if (window.hash != window.location.hash.substring(1).split('/')[0]){
@@ -134,19 +142,22 @@
 		if (!page)
 			page = 1;
 		showRoute('jobs');
-		xhr('/api/php-api.php?call=job-search&page='+page, function(response){
+		var status = window.location.hash.substring(1).split('/')[1] || "0";
+		xhr('/api/php-api.php?call=job-search&page='+page+'&status='+status, function(response){
 			try{
 				var oldul = document.getElementById('search-results');
 				oldul.parentNode.removeChild(oldul);
+				var oldpl = document.getElementById('page_links');
+				oldpl.parentNode.removeChild(oldpl);
 			}catch(e){
 				//
 			}
-			console.log(response.length);
-			console.log(response);
-			var ul = document.createElement('ul');
+			var jobs = response[1];
+			var ul = document.createElement('ul'), page_links = document.createElement('p');
+			page_links.id = "page_links";
 			ul.id = "search-results";
 			var li, bstatus, number_title, jstatus_creator;
-			for(var i=0; i<response.length; i++){
+			for(var i=0; i<jobs.length; i++){
 				li = document.createElement('li');
 				bstatus = document.createElement('span');
 				number_title = document.createElement('h2');
@@ -155,11 +166,44 @@
 				li.appendChild(number_title);
 				li.appendChild(jstatus_creator);
 				ul.appendChild(li);
-				bstatus.innerHTML = JBILLING[response[i].billing_status];
-				number_title.innerHTML = "<em>"+response[i].abbr+response[i].number+"</em> | "+response[i].title;
-				jstatus_creator.innerHTML = "<em>Job Status</em> "+JSTATUS[response[i].job_status]+" <em>Creator</em> "+response[i].first+" "+response[i].last;
+				bstatus.innerHTML = JBILLING[jobs[i].billing_status];
+				number_title.innerHTML = "<em>"+jobs[i].abbr+jobs[i].number+"</em> | "+jobs[i].title;
+				jstatus_creator.innerHTML = "<em>Job Status</em> "+JSTATUS[jobs[i].job_status]+" <em>Creator</em> "+jobs[i].first+" "+jobs[i].last;
 			}
 			document.getElementById('jobs').appendChild(ul);
+			document.getElementById('jobs').appendChild(page_links);
+			var page_count = Math.ceil(response[0]/50);
+			var a, start = page-5, end = parseInt(page)+5;
+			if(start < 1)
+				start = 1;
+			if(end > page_count)
+				end = page_count;
+			if(start != 1){
+				a = document.createElement('a');
+				a.dataset.page = 1;
+				a.addEventListener('click', function(e){showJobs(e.target.dataset.page)});
+				a.appendChild(document.createTextNode("\u00ab"));
+				a.title = "first page";
+				page_links.appendChild(a);
+				page_links.appendChild(document.createTextNode(' '));
+			}
+			for(var i=start; i<=end; i++){
+				a=document.createElement('a');
+				a.dataset.page = i;
+				a.addEventListener('click', function(e){showJobs(e.target.dataset.page)});
+				a.appendChild(document.createTextNode(i));
+				page_links.appendChild(a);
+				page_links.appendChild(document.createTextNode(' '));
+			}
+			if(end != page_count){
+				a = document.createElement('a');
+				a.dataset.page = page_count;
+				a.addEventListener('click', function(e){showJobs(e.target.dataset.page)});
+				a.appendChild(document.createTextNode("\u00bb"));
+				a.title = "last page";
+				page_links.appendChild(a);
+				page_links.appendChild(document.createTextNode(' '));
+			}
 		});
 	}
 

@@ -246,7 +246,7 @@ p.notes {
 	background-color: #ddd;
 	border-left: 1px solid #999;
 }
-#jobs > ul {
+#jobs > ul, #jobs > p {
 	float: right;
 	width: 90%;
 }
