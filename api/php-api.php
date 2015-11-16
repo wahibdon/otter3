@@ -34,6 +34,7 @@ switch ($call){
 		$stmt->bindValue(1, 0);
 		$stmt->bindValue(2, 50);
 		$stmt->execute();
+		echo $db->errorInfo();
 		echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
 		break;
 	default:
