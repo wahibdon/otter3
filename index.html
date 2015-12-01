@@ -24,7 +24,7 @@
 			'Closed'
 		]
 		const JTYPE = [
-			null,
+			'Other',
 			'Audio',
 			'Media',
 			'Print',
@@ -35,6 +35,8 @@
 	</script>
 </head>
 <body>
+
+<div id="loading"></div>
 
 <ul id="navigation">
 	<li><img src="/images/otter-logo.gif"></li>
@@ -74,13 +76,9 @@
 
 	<div id="index"></div>
 
-	<div id="clients">
-		
-	</div>
+	<div id="clients"></div>
 
-	<div id="vendors">
-
-	</div>
+	<div id="vendors"></div>
 
 	<div id="jobs">
 		<div id="page-nav">
@@ -95,12 +93,87 @@
 			</ul>
 		</div>
 		<div id="job-search">
-			<select>
+			<select id="search_type">
 				<option>All</option>
-				<option>Job &num;</option>
+				<option selected>Job &num;</option>
 				<option>Title</option>
-			</select><input type="text"><button>Search</button>
+			</select><input type="text" id="search_string"><button id="job_search">Search</button>
 		</div>
+	</div>
+
+	<div id="job">
+		<h1><span id="client-and-number"></span> <span id="job-title"></span></h1>
+		<h2><span class="h2span">Job Status</span> <span id="job-status"></span> <span class="h2span">Type</span> <span id="job-type"></span></h2>
+		<div id="job-link">
+			<ul>
+				<li>Overview</li>
+				<li>Tasks</li>
+				<li>Art</li>
+				<li>Invoices</li>
+			</ul>
+			<ul>
+				<li>Edit Project</li>
+				<li>Create Task</li>
+				<li>Add Time</li>
+				<li>Add Expense</li>
+				<li>Add Estimate</li>
+				<li>Add Invoice</li>
+				<li>Add Art</li>
+			</ul>
+		</div>
+		<div id="job-details">
+			<div id="name-vendor-contact" class="job-details-top">
+				<p id="job-creator"><em class="no-hide">Creator </em></p>
+				<p id="job-vendor"><em class="no-hide">Vendor </em></p>
+				<p id="job-contact"><em class="no-hide">Contact </em></p>
+			</div>
+			<div id="billing-created-closed" class="job-details-top">
+				<p id="job-billing"><em class="no-hide">Billing Status </em></p>
+				<p id="job-created"><em class="no-hide">Created </em></p>
+				<p id="job-closed"><em class="no-hide">Closed </em></p>
+			</div>
+			<div id="description"><em>Description</em><p id="job-description"></p></div>
+		</div>
+		<table class="job-table">
+			<thead>
+				<tr>
+					<th>id</th><th>Estimate Title</th><th>Date</th><th>Added By</th><th>File</th><th>Gross Cost</th><th>Net Cost</th>
+				</tr>
+			</thead>
+			<tbody id="estimate-body"></tbody>
+		</table>
+		<table class="job-table">
+			<thead>
+				<tr>
+					<th>id</th><th>Time Code</th><th>Total Time</th><th>Total Cost</th>
+				</tr>
+			</thead>
+			<tbody id="times-body"></tbody>
+		</table>
+		<table class="job-table">
+			<thead>
+				<tr>
+					<th>id</th><th>Expense Cost</th><th>Final Cost</th>
+				</tr>
+			</thead>
+			<tbody id="expenses-body"></tbody>
+		</table>
+		<table class="job-table">
+			<thead>
+				<tr>
+					<th>id</th><th>Invoice Title</th><th>Date</th><th>Total Cost</th>
+				</tr>
+			</thead>
+			<tbody id="invoices-body"></tbody>
+		</table>
+		<table class="job-table">
+			<thead>
+				<tr>
+					<th>id</th><th>Art Title</th><th>Date</th><th>Added By</th><th>File</th>
+				</tr>
+			</thead>
+			<tbody id="art-body"></tbody>
+		</table>
 	</div>
 
 </div>
@@ -114,18 +187,87 @@
 			showJobs();
 		})
 	}
+	document.getElementById('job_search').addEventListener('click', search);
+	document.getElementById('search_string').addEventListener('keypress', search);
+
+	function search(e){
+		if((e.type == 'keypress' && e.keyCode == '13') || e.type=="click")
+			showJobs(1, document.getElementById('search_string').value, document.getElementById('search_type').value);
+	}
 
 	var routes = [];
 	routes[''] = index;
 	routes['clients'] = getClients;
 	routes['vendors'] = getVendors;
 	routes['jobs'] = showJobs;
+	routes['job'] = showJob;
 
 	router(routes, window.hash);
 
+	function showJob(){
+		showRoute('job');
+		var job_number = window.location.hash.substring(1).split('/')[1].match(/[A-Za-z]{3}?([0-9]{5,6})/)[1];
+		xhr('/api/php-api.php?call=job&number='+job_number, function(response){
+			emptyElement([document.getElementById('client-and-number'),
+						  document.getElementById('job-title'),
+						  document.getElementById('job-status'),
+						  document.getElementById('job-type'),
+						  document.getElementById('job-creator'),
+						  //document.getElementById('job-vendor'),
+						  document.getElementById('job-contact'),
+						  document.getElementById('job-billing'),
+						  document.getElementById('job-created'),
+						  document.getElementById('job-closed')]);
+			document.getElementById('client-and-number').appendChild(document.createTextNode(response[0].name+" - "+response[0].abbr+response[0].number+" | "));
+			document.getElementById('job-title').appendChild(document.createTextNode(response[0].title));
+			document.getElementById('job-status').appendChild(document.createTextNode(JSTATUS[response[0].job_status]));
+			document.getElementById('job-type').appendChild(document.createTextNode(JTYPE[response[0].type]));
+			document.getElementById('job-creator').appendChild(document.createTextNode(response[0].creator));
+			//document.getElementById('job-vendor').appendChild(document.createTextNode(response[0].vendor));
+			document.getElementById('job-contact').appendChild(document.createTextNode(response[0].contact));
+			document.getElementById('job-billing').appendChild(document.createTextNode(JBILLING[response[0].billing_status]));
+			document.getElementById('job-created').appendChild(document.createTextNode(response[0].opened));
+			document.getElementById('job-closed').appendChild(document.createTextNode(response[0].closed));
+			document.getElementById('job-description').innerHTML = response[0].description;
+		});
+		xhr('/api/php-api.php?call=job-additional&number='+job_number, function(response){
+			//console.log(response.timecodes[response.times[0].code]*response.times[0].totaltime);
+			//createJobInfoTable(response.times, document.getElementById('times-body'), ['id', 'code', 'totaltime', response.timecodes]);
+			createJobInfoTable(response.estimates, document.getElementById('estimate-body'), ['id', 'title', 'date', 'added_by', 'name', 'amount', 'net']);
+			console.log(response);
+		})
+	}
+
+	function createJobInfoTable(source, dest, cols){
+		var tr, td;
+		for(var i=0; i<source.length; i++){
+			tr=document.createElement('tr');
+			for(col in cols){
+				td = document.createElement('td');
+				if(typeof cols[col] != "object"){
+					td.appendChild(document.createTextNode(source[i][cols[col]]));
+				}else{
+					td.appendChild(document.createTextNode(cols[col][source[i]['code']]*source[i]['totaltime']));
+				}
+				tr.appendChild(td);
+			}
+			dest.appendChild(tr);
+		}
+	}
+
 	function router(routes, route){
-		routes[route]();
-		document.body.scrollTop = 0;
+		try{
+			routes[route]();
+			document.body.scrollTop = 0;
+		}catch(e){
+			var hash;
+			if (route.match(/^[A-Za-z]{3}?([0-9]{5,6})$/)[1]){
+				window.location.hash = '#job/'+route;
+				console.log(hash);
+			}else{
+				index();
+			}
+		}
 	}
 	setInterval(function(){
 		if (window.hash != window.location.hash.substring(1).split('/')[0]){
@@ -136,14 +278,40 @@
 
 	function index(){
 		showRoute('index');
+		//
 	}
 
-	function showJobs(page){
+	function showRoute(route){
+		var routes = document.querySelectorAll('#otter > div');
+		for(var i=0; i<routes.length; i++){
+			if (routes[i].id == route){
+				routes[i].style.display = "block";
+				continue;
+			}
+			routes[i].style.display = "none";
+		}
+	}
+	function jobClick(e){
+		var node = e.target;
+		while(node.nodeName != 'LI'){
+			node = node.parentNode;
+			console.log(node);
+		}
+		var job_number = node.dataset.job_number;
+		window.location.hash = "#job/"+job_number;
+	}
+	function showJobs(page, search_string, search_type){
 		if (!page)
 			page = 1;
+		if (!search_string)
+			search_string = '';
+		if (!search_type)
+			search_type = 'all';
 		showRoute('jobs');
 		var status = window.location.hash.substring(1).split('/')[1] || "0";
-		xhr('/api/php-api.php?call=job-search&page='+page+'&status='+status, function(response){
+		xhr('/api/php-api.php?call=job-search&page='+page+'&status='+status+'&search_string='+search_string+'&search_type='+search_type, function(response){
+			if (!response)
+				return;
 			try{
 				var oldul = document.getElementById('search-results');
 				oldul.parentNode.removeChild(oldul);
@@ -166,9 +334,11 @@
 				li.appendChild(number_title);
 				li.appendChild(jstatus_creator);
 				ul.appendChild(li);
+				li.addEventListener('click', jobClick);
 				bstatus.innerHTML = JBILLING[jobs[i].billing_status];
 				number_title.innerHTML = "<em>"+jobs[i].abbr+jobs[i].number+"</em> | "+jobs[i].title;
 				jstatus_creator.innerHTML = "<em>Job Status</em> "+JSTATUS[jobs[i].job_status]+" <em>Creator</em> "+jobs[i].first+" "+jobs[i].last;
+				li.dataset.job_number = jobs[i].abbr+jobs[i].number;
 			}
 			document.getElementById('jobs').appendChild(ul);
 			document.getElementById('jobs').appendChild(page_links);
@@ -181,7 +351,7 @@
 			if(start != 1){
 				a = document.createElement('a');
 				a.dataset.page = 1;
-				a.addEventListener('click', function(e){showJobs(e.target.dataset.page)});
+				a.addEventListener('click', function(e){showJobs(e.target.dataset.page, document.getElementById('search_string').value, document.getElementById('search_type').value)});
 				a.appendChild(document.createTextNode("\u00ab"));
 				a.title = "first page";
 				page_links.appendChild(a);
@@ -190,7 +360,7 @@
 			for(var i=start; i<=end; i++){
 				a=document.createElement('a');
 				a.dataset.page = i;
-				a.addEventListener('click', function(e){showJobs(e.target.dataset.page)});
+				a.addEventListener('click', function(e){showJobs(e.target.dataset.page, document.getElementById('search_string').value, document.getElementById('search_type').value)});
 				a.appendChild(document.createTextNode(i));
 				page_links.appendChild(a);
 				page_links.appendChild(document.createTextNode(' '));
@@ -198,7 +368,7 @@
 			if(end != page_count){
 				a = document.createElement('a');
 				a.dataset.page = page_count;
-				a.addEventListener('click', function(e){showJobs(e.target.dataset.page)});
+				a.addEventListener('click', function(e){showJobs(e.target.dataset.page, document.getElementById('search_string').value, document.getElementById('search_type').value)});
 				a.appendChild(document.createTextNode("\u00bb"));
 				a.title = "last page";
 				page_links.appendChild(a);
@@ -309,47 +479,44 @@
 		return ul;
 	}
 
-	function showRoute(route){
-		var routes = document.querySelectorAll('#otter > div');
-		for(var i=0; i<routes.length; i++){
-			if (routes[i].id == route){
-				routes[i].style.display = "block";
-				continue;
-			}
-			routes[i].style.display = "none";
-		}
-	}
 
 	//simple xhr abstraction.
 	function xhr(url, callback, type, params) {
+		document.getElementById('loading').style.display = "block";
 		type = type || "get";
 		var xhr = new XMLHttpRequest();
 		xhr.open(type, url);
 		xhr.onreadystatechange = function(){
 			if(this.readyState == 4 && this.status == 200){
 				callback(JSON.parse(this.responseText));
+				document.getElementById('loading').style.display = "none";
 			}
 		}
 		xhr.send(params);
 	}
 	//empty out an element
 	function emptyElement(element){
-		var child, reserve = [];
-		while (element.lastChild){
-			try{
-				child = element.lastChild.classList.contains('no-hide');
-				if (child){
-					reserve.push(element.lastChild);
+		if(!element.length)
+			element = [element];
+		var child, reserve;
+		for(list in element){
+			reserve = [];
+			while (element[list].lastChild){
+				try{
+					child = element[list].lastChild.classList.contains('no-hide');
+					if (child){
+						reserve.push(element[list].lastChild);
+					}
+					element[list].removeChild(element[list].lastChild);
+					child = false;
+				}catch(e){
+					console.log(e)
+					element[list].removeChild(element[list].lastChild);
 				}
-				element.removeChild(element.lastChild);
-				child = false;
-			}catch(e){
-				console.log(e)
-				element.removeChild(element.lastChild);
 			}
+			for (e in reserve)
+				element[list].appendChild(reserve[e]);
 		}
-		for (e in reserve)
-			element.appendChild(reserve[e]);
 	}
 </script>
 </body>
