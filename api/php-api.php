@@ -98,13 +98,13 @@ switch ($call){
 			$timecodes = $db->prepare("select timecodes.* from timecodes left join jobs on jobs.client_id = timecodes.client_id where jobs.number = :number or timecodes.client_id = 0 limit 0,1");
 			$timecodes->bindValue(":number", $_GET['number']);
 			$timecodes->execute();
-			$expenses = $db->prepare("select expenses.* from expenses left join jobs on expenses.job_id = jobs.id where jobs.number = :number");
+			$expenses = $db->prepare("select expenses.*, concat(users.first, ' ', users.last) added_by from expenses left join jobs on expenses.job_id = jobs.id left join users on expenses.added_by = users.id where jobs.number = :number");
 			$expenses->bindValue(":number", $_GET['number']);
 			$expenses->execute();
-			$invoices = $db->prepare("select invoices.* from invoices left join jobs on invoices.job_id = jobs.id where jobs.number = :number");
+			$invoices = $db->prepare("select invoices.*, concat(users.first, ' ', users.last) added_by from invoices left join jobs on invoices.job_id = jobs.id left join users on invoices.added_by = users.id where jobs.number = :number");
 			$invoices->bindValue(":number", $_GET['number']);
 			$invoices->execute();
-			$art = $db->prepare("select art.* from art left join jobs on art.job_id=jobs.id where jobs.number = :number");
+			$art = $db->prepare("select art.*, concat(users.first, ' ', users.last) added_by from art left join jobs on art.job_id=jobs.id left join users on art.added_by = users.id where jobs.number = :number");
 			$art->bindValue(":number", $_GET['number']);
 			$art->execute();
 			echo json_encode(["estimates"=>$estimates->fetchAll(PDO::FETCH_OBJ), "times"=>$times->fetchAll(PDO::FETCH_OBJ), "timecodes" => $timecodes->fetchAll(PDO::FETCH_OBJ)[0], "expenses" => $expenses->fetchAll(PDO::FETCH_OBJ), "invoices" => $invoices->fetchAll(PDO::FETCH_OBJ), "art" => $art->fetchAll(PDO::FETCH_OBJ)]);

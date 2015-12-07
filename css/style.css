@@ -354,10 +354,21 @@ table.job-table > thead th:last-child{
 	border-right-width: 1px;
 }
 table.job-table > tbody td{
-	border-width: 1px 0 1px 1px;
+	border-width: 0 0 1px 1px;
 	border-color: #fff;
 	border-style: solid;
 	padding: 5px;
+}
+table.job-table > tbody tr{
+	background-color: #eee;
+}
+table.job-table > tbody tr:nth-child(2n){
+	background-color: #ddd;
+	background-color: #eee;
+}
+table.job-table > tbody td[colspan]{
+	text-align: right;
+	font-weight: 600;
 }
 table.job-table > tbody td:last-child{
 	border-right-width: 1px;

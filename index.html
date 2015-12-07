@@ -137,7 +137,7 @@
 		<table class="job-table">
 			<thead>
 				<tr>
-					<th>id</th><th>Estimate Title</th><th>Date</th><th>Added By</th><th>File</th><th>Gross Cost</th><th>Net Cost</th>
+					<th>id</th><th>Estimate Title</th><th>Date</th><th>Added By</th><th>Gross Cost</th><th>Net Cost</th>
 				</tr>
 			</thead>
 			<tbody id="estimate-body"></tbody>
@@ -153,7 +153,7 @@
 		<table class="job-table">
 			<thead>
 				<tr>
-					<th>id</th><th>Expense Cost</th><th>Final Cost</th>
+					<th>id</th><th>Expense Title</th><th>Date</th><th>Added By</th><th>Cost</th><th>Final Cost</th>
 				</tr>
 			</thead>
 			<tbody id="expenses-body"></tbody>
@@ -161,7 +161,7 @@
 		<table class="job-table">
 			<thead>
 				<tr>
-					<th>id</th><th>Invoice Title</th><th>Date</th><th>Total Cost</th>
+					<th>id</th><th>Invoice Title</th><th>Date</th><th>Added By</th><th>Total Cost</th>
 				</tr>
 			</thead>
 			<tbody id="invoices-body"></tbody>
@@ -169,7 +169,7 @@
 		<table class="job-table">
 			<thead>
 				<tr>
-					<th>id</th><th>Art Title</th><th>Date</th><th>Added By</th><th>File</th>
+					<th>id</th><th>Art Title</th><th>Date</th><th>Added By</th>
 				</tr>
 			</thead>
 			<tbody id="art-body"></tbody>
@@ -232,25 +232,57 @@
 		});
 		xhr('/api/php-api.php?call=job-additional&number='+job_number, function(response){
 			//console.log(response.timecodes[response.times[0].code]*response.times[0].totaltime);
-			//createJobInfoTable(response.times, document.getElementById('times-body'), ['id', 'code', 'totaltime', response.timecodes]);
-			createJobInfoTable(response.estimates, document.getElementById('estimate-body'), ['id', 'title', 'date', 'added_by', 'name', 'amount', 'net']);
+			createJobInfoTable(response.times, document.getElementById('times-body'), ['id', 'code', 'totaltime', response.timecodes]);
+			createJobInfoTable(response.estimates, document.getElementById('estimate-body'), ['id', 'title', 'date', 'added_by', 'amount', 'net']);
+			createJobInfoTable(response.expenses, document.getElementById('expenses-body'), ['id', 'title', 'date', 'added_by', 'cost', 'final_cost']);
+			createJobInfoTable(response.invoices, document.getElementById('invoices-body'), ['id', 'title', 'date', 'added_by', 'amount']);
+			createJobInfoTable(response.art, document.getElementById('art-body'), ['id', 'title', 'date', 'added_by']);
 			console.log(response);
+			console.log(response.art[0].title == '');
 		})
 	}
 
 	function createJobInfoTable(source, dest, cols){
-		var tr, td;
+		var tr, td, a, totals=0;
 		for(var i=0; i<source.length; i++){
 			tr=document.createElement('tr');
 			for(col in cols){
 				td = document.createElement('td');
 				if(typeof cols[col] != "object"){
-					td.appendChild(document.createTextNode(source[i][cols[col]]));
+					if (cols[col] == 'title' && source[i]['file']){
+						a = document.createElement('a');
+						a.href = "/upload/"+source[i]['file'];
+						console.log(source[i].title == "");
+						if(source[i].title != "")
+							a.appendChild(document.createTextNode(source[i][cols[col]]));
+						else
+							a.appendChild(document.createTextNode(source[i]['file']));
+						td.appendChild(a);
+					}else{
+						td.appendChild(document.createTextNode(source[i][cols[col]]));
+					}
 				}else{
+					totals+=cols[col][source[i]['code']]*source[i]['totaltime'];
 					td.appendChild(document.createTextNode(cols[col][source[i]['code']]*source[i]['totaltime']));
+				}
+				if(cols[col] == 'final_cost'){
+					totals += parseFloat(source[i][cols[col]]);
 				}
 				tr.appendChild(td);
 			}
+			dest.appendChild(tr);
+		}
+		if(totals != 0){
+			tr = document.createElement('tr');
+			tr.appendChild(document.createElement('td'));
+			td = document.createElement('td');
+			tr.appendChild(td);
+			console.log(source[0]);
+			td.colSpan = cols.length -2;
+			td.appendChild(document.createTextNode("total:"));
+			td = document.createElement('td');
+			tr.appendChild(td);
+			td.appendChild(document.createTextNode(totals.toFixed(2)));
 			dest.appendChild(tr);
 		}
 	}
