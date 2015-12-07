@@ -110,6 +110,11 @@ switch ($call){
 			echo json_encode(["estimates"=>$estimates->fetchAll(PDO::FETCH_OBJ), "times"=>$times->fetchAll(PDO::FETCH_OBJ), "timecodes" => $timecodes->fetchAll(PDO::FETCH_OBJ)[0], "expenses" => $expenses->fetchAll(PDO::FETCH_OBJ), "invoices" => $invoices->fetchAll(PDO::FETCH_OBJ), "art" => $art->fetchAll(PDO::FETCH_OBJ)]);
 		}
 		break;
+	case 'credentials':
+		$stmt = $db->prepare("select * from credentials");
+		$stmt->execute();
+		echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
+		break;
 	default:
 		echo json_encode("false");
 		break;

@@ -134,7 +134,7 @@
 			</div>
 			<div id="description"><em>Description</em><p id="job-description"></p></div>
 		</div>
-		<table class="job-table">
+		<table class="default-table">
 			<thead>
 				<tr>
 					<th>id</th><th>Estimate Title</th><th>Date</th><th>Added By</th><th>Gross Cost</th><th>Net Cost</th>
@@ -142,7 +142,7 @@
 			</thead>
 			<tbody id="estimate-body"></tbody>
 		</table>
-		<table class="job-table">
+		<table class="default-table">
 			<thead>
 				<tr>
 					<th>id</th><th>Time Code</th><th>Total Time</th><th>Total Cost</th>
@@ -150,7 +150,7 @@
 			</thead>
 			<tbody id="times-body"></tbody>
 		</table>
-		<table class="job-table">
+		<table class="default-table">
 			<thead>
 				<tr>
 					<th>id</th><th>Expense Title</th><th>Date</th><th>Added By</th><th>Cost</th><th>Final Cost</th>
@@ -158,7 +158,7 @@
 			</thead>
 			<tbody id="expenses-body"></tbody>
 		</table>
-		<table class="job-table">
+		<table class="default-table">
 			<thead>
 				<tr>
 					<th>id</th><th>Invoice Title</th><th>Date</th><th>Added By</th><th>Total Cost</th>
@@ -166,13 +166,24 @@
 			</thead>
 			<tbody id="invoices-body"></tbody>
 		</table>
-		<table class="job-table">
+		<table class="default-table">
 			<thead>
 				<tr>
 					<th>id</th><th>Art Title</th><th>Date</th><th>Added By</th>
 				</tr>
 			</thead>
 			<tbody id="art-body"></tbody>
+		</table>
+	</div>
+
+	<div id="credentials">
+		<table class="default-table">
+			<thead>
+				<tr>
+					<th>id</th><th>Site</th><th>Username</th><th>Password</th><th>Notes</th>
+				</tr>
+			</thead>
+			<tbody id="credentials-body"></tbody>
 		</table>
 	</div>
 
@@ -201,8 +212,16 @@
 	routes['vendors'] = getVendors;
 	routes['jobs'] = showJobs;
 	routes['job'] = showJob;
+	routes['credentials'] = showCredentials;
 
 	router(routes, window.hash);
+
+	function showCredentials(){
+		showRoute('credentials');
+		xhr('/api/php-api.php?call=credentials', function(response){
+			console.log(response);
+		});
+	}
 
 	function showJob(){
 		showRoute('job');

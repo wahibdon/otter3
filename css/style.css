@@ -332,47 +332,47 @@ div.job-details-top {
 	float: right;
 	width: 85%;
 }
-table.job-table{
+table.default-table{
 	width: 100%;
 	border: 1px solid #888;
 	border-spacing: 0;
 	font-size: 22px;
 	margin-bottom: 20px;
 }
-table.job-table > thead > tr {
+table.default-table > thead > tr {
 	background-color: #888;
 	color: #fff;
 }
-table.job-table > thead th{
+table.default-table > thead th{
 	border-width: 1px 0 1px 1px;
 	border-color: #fff;
 	border-style: solid;
     white-space: nowrap;
     padding: 5px;
 }
-table.job-table > thead th:last-child{
+table.default-table > thead th:last-child{
 	border-right-width: 1px;
 }
-table.job-table > tbody td{
+table.default-table > tbody td{
 	border-width: 0 0 1px 1px;
 	border-color: #fff;
 	border-style: solid;
 	padding: 5px;
 }
-table.job-table > tbody tr{
+table.default-table > tbody tr{
 	background-color: #eee;
 }
-table.job-table > tbody tr:nth-child(2n){
+table.default-table > tbody tr:nth-child(2n){
 	background-color: #ddd;
 	background-color: #eee;
 }
-table.job-table > tbody td[colspan]{
+table.default-table > tbody td[colspan]{
 	text-align: right;
 	font-weight: 600;
 }
-table.job-table > tbody td:last-child{
+table.default-table > tbody td:last-child{
 	border-right-width: 1px;
 }
-table.job-table th:first-child, table.job-table td:first-child{
+table.default-table th:first-child, table.default-table td:first-child{
 	display: none;
 }
