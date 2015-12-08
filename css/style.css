@@ -376,3 +376,20 @@ table.default-table > tbody td:last-child{
 table.default-table th:first-child, table.default-table td:first-child{
 	display: none;
 }
+div#reports > ul li:first-child {
+	margin-top: 0;
+}
+div#reports > ul li {
+	border: none;
+	background-color: #c00;
+	color: #fff;
+	margin: 5px 0;
+}
+div#reports > ul {
+	float:left;
+}
+div.report-area {
+	display: none;
+	float: right;
+	width: 79%;
+}

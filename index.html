@@ -187,17 +187,40 @@
 		</table>
 	</div>
 
+	<div id="reports">
+		
+		<ul>
+			<li class="report-button" data-id="adminTimeSheet">Admin Timesheets</li>
+			<li class="report-button" data-id="timesForProject">Times for Project</li>
+			<li class="report-button" data-id="jobsSinceLastReport">Jobs Since Last Report</li>
+			<li class="report-button" data-id="employeeTimesheet">Employee Times</li>
+			<li class="report-button" data-id="openJobs-Tasks">Open Jobs &amp; Tasks</li>
+			<li class="report-button" data-id="time-CostForClient">Time &amp; Cost for Client</li>
+		</ul>
+
+		<div class="report-area" id="adminTimeSheet"><h2>Admin Timesheets</h2></div>
+
+		<div class="report-area" id="timesForProject"><h2>Times for Project</h2></div>
+
+		<div class="report-area" id="jobsSinceLastReport"><h2>Jobs Since Last Report</h2></div>
+
+		<div class="report-area" id="employeeTimesheet"><h2>Employee Times</h2></div>
+
+		<div class="report-area" id="openJobs-Tasks"><h2>Open Jobs &amp; Tasks</h2></div>
+
+		<div class="report-area" id="time-CostForClient"><h2>Time &amp; Cost for Client</h2></div>
+
+	</div>
+
 </div>
 
 <script type="text/javascript">
 	window.hash = window.location.hash.substring(1).split('/')[0];
-	var search_links = document.getElementsByClassName('job-search');
-	for(var i=0; i<search_links.length; i++){
-		search_links[i].addEventListener('click', function(e){
-			window.location.hash = window.hash + "/" + e.target.dataset.link;
-			showJobs();
-		})
-	}
+	addEventToAllOfClass(document.getElementsByClassName('job-search'), 'click', function(e){
+		window.location.hash = window.hash + "/" + e.target.dataset.link;
+		showJobs();
+	});
+	addEventToAllOfClass(document.getElementsByClassName('report-button'), 'click', selectReport);
 	document.getElementById('job_search').addEventListener('click', search);
 	document.getElementById('search_string').addEventListener('keypress', search);
 
@@ -213,12 +236,24 @@
 	routes['jobs'] = showJobs;
 	routes['job'] = showJob;
 	routes['credentials'] = showCredentials;
+	routes['reports'] = showReports;
 
 	router(routes, window.hash);
+
+	function showReports(){
+		showRoute('reports');
+		document.getElementById('loading').style.display = "none";
+	}
+
+	function selectReport(e){
+		hideAllOfClass(document.getElementsByClassName('report-area'));
+		document.getElementById(e.target.dataset.id).style.display = "block";
+	}
 
 	function showCredentials(){
 		showRoute('credentials');
 		xhr('/api/php-api.php?call=credentials', function(response){
+			createJobInfoTable(response, document.getElementById('credentials-body'), ['id', 'site', 'username', 'password', 'notes']);
 			console.log(response);
 		});
 	}
@@ -312,10 +347,12 @@
 			document.body.scrollTop = 0;
 		}catch(e){
 			var hash;
-			if (route.match(/^[A-Za-z]{3}?([0-9]{5,6})$/)[1]){
-				window.location.hash = '#job/'+route;
-				console.log(hash);
-			}else{
+			try{
+				if (route.match(/^[A-Za-z]{3}?([0-9]{5,6})$/)[1]){
+					window.location.hash = '#job/'+route;
+					console.log(hash);
+				}
+			}catch(e){
 				index();
 			}
 		}
@@ -329,7 +366,7 @@
 
 	function index(){
 		showRoute('index');
-		//
+		document.getElementById('loading').style.display = "none";
 	}
 
 	function showRoute(route){
@@ -567,6 +604,16 @@
 			}
 			for (e in reserve)
 				element[list].appendChild(reserve[e]);
+		}
+	}
+	function addEventToAllOfClass(collection, event_type, callback){
+		for(var i=0; i<collection.length; i++){
+			collection[i].addEventListener(event_type, callback);
+		}
+	}
+	function hideAllOfClass(collection){
+		for(var i = 0; i<collection.length; i++){
+			collection[i].style.display = "none";
 		}
 	}
 </script>
