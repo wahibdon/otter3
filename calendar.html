@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>calendar</title>
+</head>
+<body>
+<div id="cal-root">
+	<h2 id="cal-month"></h2>
+	<h2 id="cal-year"></h2>
+	<table>
+		<thead>
+			<tr>
+				<th>Sun</th><th>Mon</th><th>Tues</th><th>Weds</th><th>Thurs</th><th>Fri</th><th>Sat</th>
+			</tr>
+		</thead>
+		<tbody id="cal-body">
+		</tbody>
+	</table>
+	<span id="cal-prev-month">&lt;</span><span id="cal-next-month">&gt;</span>
+</div>
+<script type="text/javascript">
+var day1 = new Date();
+buildCalendar(buildMonthArray(day1));
+document.getElementById('cal-prev-month').addEventListener('click', function(){
+	var root = document.getElementById('cal-root');
+	buildCalendar(buildMonthArray(new Date(root.dataset.year, parseInt(root.dataset.month)-1, 1)));
+});
+document.getElementById('cal-next-month').addEventListener('click', function(){
+	var root = document.getElementById('cal-root');
+	buildCalendar(buildMonthArray(new Date(root.dataset.year, parseInt(root.dataset.month)+1, 1)));
+});
+function buildMonthArray(dateObject){
+	var	year = dateObject.getFullYear();
+	var month = dateObject.getMonth();
+	var rows = [];
+	var row_index = 0
+	rows[0] = [];
+	dateObject.setDate(1);
+	var offset = dateObject.getDay();
+	while (dateObject.getMonth() == month){
+		rows[row_index][offset] = dateObject.getDate();
+		dateObject.setDate(dateObject.getDate()+1);
+		offset++;
+		if(offset == 7){
+			row_index++;
+			rows[row_index] = [];
+			offset = 0;
+		}
+	}
+	return {
+		'year': year,
+		'month': month,
+		'cal': rows
+	}
+}
+function buildCalendar(monthOject){
+	var cal = monthOject.cal;
+	var row;
+	var td;
+	var root = document.getElementById('cal-root');
+	var year = document.getElementById('cal-year');
+	emptyElement(year);
+	year.appendChild(document.createTextNode(monthOject.year));
+	var month = document.getElementById('cal-month');
+	emptyElement(month);
+	month.appendChild(document.createTextNode(monthOject.month));
+	var month = monthOject.month;
+	root.dataset.month = monthOject.month;
+	root.dataset.year = monthOject.year;
+	var tbody = document.getElementById('cal-body');
+	emptyElement(tbody);
+	for(var i = 0; i<cal.length; i++){
+		row = document.createElement('tr');
+		for(var j = 0; j<7; j++){
+			td = document.createElement('td');
+			if(cal[i][j] != undefined){
+				td.appendChild(document.createTextNode(cal[i][j]));
+			}
+			row.appendChild(td);
+		}
+		tbody.appendChild(row);
+	}
+}
+function emptyElement(element){
+	if(!element.length)
+		element = [element];
+	var child, reserve;
+	for(list in element){
+		reserve = [];
+		while (element[list].lastChild){
+			try{
+				child = element[list].lastChild.classList.contains('no-hide');
+				if (child){
+					reserve.push(element[list].lastChild);
+				}
+				element[list].removeChild(element[list].lastChild);
+				child = false;
+			}catch(e){
+				console.log(e)
+				element[list].removeChild(element[list].lastChild);
+			}
+		}
+		for (e in reserve)
+			element[list].appendChild(reserve[e]);
+	}
+}
+</script>
+</body>
+</html>

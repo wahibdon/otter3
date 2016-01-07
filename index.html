@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
 	<title></title>
@@ -29,8 +29,7 @@
 			'Media',
 			'Print',
 			'Video',
-			'Web',
-			'Other'
+			'Web'
 		]
 	</script>
 </head>
@@ -198,9 +197,17 @@
 			<li class="report-button" data-id="time-CostForClient">Time &amp; Cost for Client</li>
 		</ul>
 
-		<div class="report-area" id="adminTimeSheet"><h2>Admin Timesheets</h2></div>
+		<div class="report-area" id="adminTimeSheet">
+			<h2>Admin Timesheets</h2>
+			<input type="text" id="ats_start"><span class="calendar-button" data-target="ats_start">📅</span>
+			<input type="text" id="ats_end"><span class="calendar-button" data-target="ats_end">📅</span>
+			<button>Run Report</button>
+		</div>
 
-		<div class="report-area" id="timesForProject"><h2>Times for Project</h2></div>
+		<div class="report-area" id="timesForProject">
+			<h2>Times for Project</h2>
+			<select id="project_list"></select>
+		</div>
 
 		<div class="report-area" id="jobsSinceLastReport"><h2>Jobs Since Last Report</h2></div>
 
@@ -213,8 +220,24 @@
 	</div>
 
 </div>
+<div id="cal-root">
+	<h2 id="cal-month"></h2>
+	<h2 id="cal-year"></h2>
+	<table>
+		<thead>
+			<tr>
+				<th>Sun</th><th>Mon</th><th>Tues</th><th>Weds</th><th>Thurs</th><th>Fri</th><th>Sat</th>
+			</tr>
+		</thead>
+		<tbody id="cal-body">
+		</tbody>
+	</table>
+	<span id="cal-prev-month">&lt;</span><span id="cal-next-month">&gt;</span>
+</div>
+<script type="text/javascript" src="/js/cal.js"></script>
 
 <script type="text/javascript">
+	addEventToAllOfClass(document.getElementsByClassName('calendar-button'), 'click', calPopup);
 	window.hash = window.location.hash.substring(1).split('/')[0];
 	addEventToAllOfClass(document.getElementsByClassName('job-search'), 'click', function(e){
 		window.location.hash = window.hash + "/" + e.target.dataset.link;
@@ -292,7 +315,6 @@
 			createJobInfoTable(response.invoices, document.getElementById('invoices-body'), ['id', 'title', 'date', 'added_by', 'amount']);
 			createJobInfoTable(response.art, document.getElementById('art-body'), ['id', 'title', 'date', 'added_by']);
 			console.log(response);
-			console.log(response.art[0].title == '');
 		})
 	}
 

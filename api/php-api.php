@@ -81,7 +81,7 @@ switch ($call){
 		break;
 	case 'job':
 		if(isset($_GET['number'])){
-			$stmt = $db->prepare("select jobs.*, abbr, concat(users.first, ' ', users.last) creator, clients.name, concat(client_contact.first, ' ', client_contact.last) contact from jobs left join clients on jobs.client_id = clients.id left join users on users.id = jobs.creator left join client_contact on client_contact.id = jobs.contact_id where jobs.number=:number");
+			$stmt = $db->prepare("select jobs.*, abbr, concat(users.first, ' ', users.last) creator, clients.name from jobs left join clients on jobs.client_id = clients.id left join users on users.id = jobs.creator where jobs.number=:number");
 			$stmt->bindValue(':number', $_GET['number'], PDO::PARAM_INT);
 			$stmt->execute();
 			echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));

@@ -393,3 +393,21 @@ div.report-area {
 	float: right;
 	width: 79%;
 }
+#cal-root{
+	display: none;
+	position: absolute;
+	z-index: 900;
+	background-color: #fff;
+	text-align: center;
+}
+#cal-root h2 {
+	display: inline-block;
+	margin: 0;
+	font-size: 16px;
+}
+#cal-root td, #cal-root th {
+	font-size: 12px;
+}
+#cal-root td, .calendar-button, #cal-prev-month, #cal-next-month {
+	cursor: pointer;
+}
