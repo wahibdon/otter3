@@ -411,3 +411,16 @@ div.report-area {
 #cal-root td, .calendar-button, #cal-prev-month, #cal-next-month {
 	cursor: pointer;
 }
+#editor-container {
+	background-color: #fff;
+	border: 1px solid #777;
+	padding: 3px;
+	height: 400px;
+	overflow: auto;
+}
+#formatting-container {
+	background-color: #ccc;
+	border: 1px solid #777;
+	border-bottom-width: 0;
+	padding: 3px;
+}

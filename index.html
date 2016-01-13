@@ -3,6 +3,7 @@
 <head>
 	<title></title>
 	<link rel="stylesheet" type="text/css" href="/css/style.css">
+	<link rel="stylesheet" type="text/css" href="/css/quill.base.css">
 	<script type="text/javascript" src="/js/lib.js"></script>
 	<style type="text/css">
 	</style>
@@ -50,10 +51,10 @@
 	<li>
 		<a href="#jobs">jobs</a>
 		<ul>
-			<li><a href="#jobs/add">add job</a></li>
-			<li><a href="#jobs/open">open jobs</a></li>
-			<li><a href="#jobs/closed">closed jobs</a></li>
-			<li><a href="#jobs/onhold">on-hold jobs</a></li>
+			<li><a href="#add-job">add job</a></li>
+			<li><a href="#jobs/1">open jobs</a></li>
+			<li><a href="#jobs/3">closed jobs</a></li>
+			<li><a href="#jobs/2">on-hold jobs</a></li>
 		</ul>
 	</li>
 	<li>
@@ -88,7 +89,7 @@
 				<li data-link="2" class="job-search">On-Hold</li>
 			</ul>
 			<ul>
-				<li>Add Job</li>
+				<li><a href="#add-job">Add Job</a></li>
 			</ul>
 		</div>
 		<div id="job-search">
@@ -186,6 +187,74 @@
 		</table>
 	</div>
 
+	<div id="add-job">
+		<!--  -->
+		<select id="add-job-client-list" class="add-job-form">
+			<option value="0">[Select Client]</option>
+		</select>
+		<input type="text" class="add-job-form">
+		<select class="add-job-form" id="add-job-type-list">
+			<option value="0">[Job Type]</option>
+		</select>
+		<div id="content-container">
+			<div id="editor-wrapper">
+			<div id="formatting-container">
+				<select title="Font" class="ql-font">
+					<option value="sans-serif" selected>Sans Serif</option>
+					<option value="Georgia, serif">Serif</option>
+					<option value="Monaco, 'Courier New', monospace">Monospace</option>
+				</select>
+				<select title="Size" class="ql-size">
+					<option value="10px">Small</option>
+					<option value="13px" selected>Normal</option>
+					<option value="18px">Large</option>
+					<option value="32px">Huge</option>
+				</select>
+				<select title="Text Color" class="ql-color">
+					<option value="rgb(255, 255, 255)">White</option>
+					<option value="rgb(0, 0, 0)" selected>Black</option>
+					<option value="rgb(255, 0, 0)">Red</option>
+					<option value="rgb(0, 0, 255)">Blue</option>
+					<option value="rgb(0, 255, 0)">Lime</option>
+					<option value="rgb(0, 128, 128)">Teal</option>
+					<option value="rgb(255, 0, 255)">Magenta</option>
+					<option value="rgb(255, 255, 0)">Yellow</option>
+				</select>
+				<select title="Background Color" class="ql-background">
+					<option value="rgb(255, 255, 255)" selected>White</option>
+					<option value="rgb(0, 0, 0)">Black</option>
+					<option value="rgb(255, 0, 0)">Red</option>
+					<option value="rgb(0, 0, 255)">Blue</option>
+					<option value="rgb(0, 255, 0)">Lime</option>
+					<option value="rgb(0, 128, 128)">Teal</option>
+					<option value="rgb(255, 0, 255)">Magenta</option>
+					<option value="rgb(255, 255, 0)">Yellow</option>
+				</select>
+				<select title="Text Alignment" class="ql-align">
+					<option value="left" selected>Left</option>
+					<option value="center">Center</option>
+					<option value="right">Right</option>
+					<option value="justify">Justify</option>
+				</select>
+				<button title="Bold" class="ql-format-button ql-bold">Bold</button>
+				<button title="Italic" class="ql-format-button ql-italic">Italic</button>
+				<button title="Underline" class="ql-format-button ql-underline">Under</button>
+				<button title="Strikethrough" class="ql-format-button ql-strike">Strike</button>
+				<button title="Link" class="ql-format-button ql-link">Link</button>
+				<button title="Image" class="ql-format-button ql-image">Image</button>
+				<button title="Bullet" class="ql-format-button ql-bullet">Bullet</button>
+				<button title="List" class="ql-format-button ql-list">List</button>
+			</div>
+			<div id="editor-container" class="add-job-form"></div>
+			</div>
+		</div>
+		<select id="add-job-billing-list" class="add-job-form">
+			<option value="0">[Billing]</option>
+		</select>
+		<button>Cancel</button>
+		<button>Create Job</button>
+	</div>
+
 	<div id="reports">
 		
 		<ul>
@@ -235,8 +304,16 @@
 	<span id="cal-prev-month">&lt;</span><span id="cal-next-month">&gt;</span>
 </div>
 <script type="text/javascript" src="/js/cal.js"></script>
-
+<script type="text/javascript" src="/js/quill.min.js"></script>
 <script type="text/javascript">
+	var editor = new Quill('#editor-container', {
+		modules: {
+			'toolbar': { container: '#formatting-container' },
+			'link-tooltip': true,
+			'image-tooltip': true
+		}
+	});
+
 	addEventToAllOfClass(document.getElementsByClassName('calendar-button'), 'click', calPopup);
 	window.hash = window.location.hash.substring(1).split('/')[0];
 	addEventToAllOfClass(document.getElementsByClassName('job-search'), 'click', function(e){
@@ -260,8 +337,57 @@
 	routes['job'] = showJob;
 	routes['credentials'] = showCredentials;
 	routes['reports'] = showReports;
+	routes['add-job'] = function(){
+		showRoute('add-job');
+		listClients(document.getElementById('add-job-client-list'));
+		selectFromConst(JTYPE, document.getElementById('add-job-type-list'));
+		selectFromConst(JBILLING, document.getElementById('add-job-billing-list'));
+	}
 
 	router(routes, window.hash);
+
+	function resetForm(form){
+		var elements = document.getElementsByClassName(form),
+			node = "";
+		for(var i=0; i<elements.length; i++){
+			node = elements[i].nodeName;
+			switch (node){
+				case 'DIV':
+					emptyElement(elements[i].firstChild);
+					break;
+				case 'SELECT':
+					elements[i].value=0;
+					break;
+				case 'INPUT':
+					if (elements[i].type=="text")
+						elements[i].value = '';
+					break;
+				default:
+					break;
+			}
+		}
+	}
+
+	function listClients(target){
+		xhr('/api/php-api.php?call=list-client', function(res){
+			var option;
+			for (var i=0; i<res.length; i++){
+				option = document.createElement('option');
+				option.appendChild(document.createTextNode(res[i].abbr+" - "+res[i].name));
+				option.value = res[i].id;
+				target.appendChild(option);
+			}
+		});
+	}
+	function selectFromConst(src, target){
+		var option;
+		for(var i=1; i<src.length; i++){
+			option = document.createElement('option');
+			option.appendChild(document.createTextNode(src[i]));
+			option.value = i;
+			target.appendChild(option);
+		}
+	}
 
 	function showReports(){
 		showRoute('reports');

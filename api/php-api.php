@@ -115,6 +115,11 @@ switch ($call){
 		$stmt->execute();
 		echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
 		break;
+	case 'list-client':
+		$stmt = $db->prepare("select id, abbr, name from clients order by abbr");
+		$stmt->execute(); 
+		echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
+		break;
 	default:
 		echo json_encode("false");
 		break;
