@@ -411,7 +411,7 @@ div.report-area {
 #cal-root td, .calendar-button, #cal-prev-month, #cal-next-month {
 	cursor: pointer;
 }
-#editor-container {
+div.quill-editor {
 	background-color: #fff;
 	border: 1px solid #777;
 	padding: 3px;

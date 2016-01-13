@@ -188,12 +188,12 @@
 	</div>
 
 	<div id="add-job">
-		<!--  -->
-		<select id="add-job-client-list" class="add-job-form">
+		<input type="hidden" value="add-job" class="add-job-form" data-type="form">
+		<select id="add-job-client-list" data-type="client" class="add-job-form">
 			<option value="0">[Select Client]</option>
 		</select>
-		<input type="text" class="add-job-form">
-		<select class="add-job-form" id="add-job-type-list">
+		<input type="text" class="add-job-form" data-type="title">
+		<select class="add-job-form" id="add-job-type-list" data-type="type">
 			<option value="0">[Job Type]</option>
 		</select>
 		<div id="content-container">
@@ -245,10 +245,10 @@
 				<button title="Bullet" class="ql-format-button ql-bullet">Bullet</button>
 				<button title="List" class="ql-format-button ql-list">List</button>
 			</div>
-			<div id="editor-container" class="add-job-form"></div>
+			<div id="add-job-editor" data-type="description" class="add-job-form quill-editor"></div>
 			</div>
 		</div>
-		<select id="add-job-billing-list" class="add-job-form">
+		<select id="add-job-billing-list" class="add-job-form" data-type="billing">
 			<option value="0">[Billing]</option>
 		</select>
 		<button>Cancel</button>
@@ -306,7 +306,8 @@
 <script type="text/javascript" src="/js/cal.js"></script>
 <script type="text/javascript" src="/js/quill.min.js"></script>
 <script type="text/javascript">
-	var editor = new Quill('#editor-container', {
+	var editors = [];
+	editors['add-job-editor'] = new Quill('#add-job-editor', {
 		modules: {
 			'toolbar': { container: '#formatting-container' },
 			'link-tooltip': true,
@@ -366,6 +367,31 @@
 					break;
 			}
 		}
+		//window.history.back();
+	}
+
+	function submitForm(form){
+		var elements = document.getElementsByClassName(form),
+			node = "",
+			data=new FormData();
+		for(var i=0; i<elements.length; i++){
+			node = elements[i].nodeName;
+			switch (node){
+				case 'DIV':
+					data.append(elements[i].dataset.type, editors[elements[i].id].getHTML());
+					break;
+				case 'SELECT':
+				case 'INPUT':
+					data.append(elements[i].dataset.type, elements[i].value);
+					break;
+				default:
+					break;
+			}
+		}
+		xhr('/api/php-api.php?call=submit-form', function(){
+			resetForm(form);
+		}, 'post', data);
+		console.log(data);
 	}
 
 	function listClients(target){
