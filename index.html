@@ -255,6 +255,18 @@
 		<button>Create Job</button>
 	</div>
 
+	<div id="add-client"></div>
+
+	<div id="add-vendor"></div>
+
+	<div id="add-client-contact"></div>
+
+	<div id="add-job"></div>
+
+	<div id="add-task"></div>
+
+	<div id="show-task"></div>
+
 	<div id="reports">
 		
 		<ul>
@@ -344,6 +356,9 @@
 		selectFromConst(JTYPE, document.getElementById('add-job-type-list'));
 		selectFromConst(JBILLING, document.getElementById('add-job-billing-list'));
 	}
+	routes['add-client'] = function(){showRoute('add-client')};
+	routes['add-vendor'] = function(){showRoute('add-vendor')};
+	routes['add-client-contact'] = function(){showRoute('add-client-contact')};
 
 	router(routes, window.hash);
 
@@ -648,6 +663,12 @@
 			/*if ((client = window.location.hash.substring(1).split('/')[1]) != undefined){
 				showClient(client);
 			}*/
+			try{
+				var old = document.getElementById(window.hash+'info');
+				old.parentNode.removeChild(old);
+			}catch(e){
+				//
+			}
 		});
 	}
 
@@ -669,6 +690,12 @@
 			/*if ((vendor = window.location.hash.substring(1).split('/')[1]) != undefined){
 				showVendor(vendor);
 			}*/
+			try{
+				var old = document.getElementById(window.hash+'info');
+				old.parentNode.removeChild(old);
+			}catch(e){
+				//
+			}
 		});
 	}
 
