@@ -125,6 +125,7 @@ switch ($call){
 		break;
 	default:
 		echo json_encode("false");
+		$stmt = $db->prepare("insert into jobs (client_id, ")
 		break;
 }
 function listTable($table){
