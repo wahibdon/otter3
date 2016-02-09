@@ -252,7 +252,7 @@
 			<option value="0">[Billing]</option>
 		</select>
 		<button>Cancel</button>
-		<button>Create Job</button>
+		<button id="create-job">Create Job</button>
 	</div>
 
 	<div id="add-client"></div>
@@ -405,10 +405,11 @@
 					break;
 			}
 		}
-		xhr('/api/php-api.php?call=submit-form', function(){
+		data.append('form', form);
+		xhr('/api/php-api.php?call=submit-form', function(res){
 			resetForm(form);
+			window.location.hash="job/CGL151082";
 		}, 'post', data);
-		console.log(data);
 	}
 
 	function listClients(target){

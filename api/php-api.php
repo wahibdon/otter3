@@ -120,6 +120,9 @@ switch ($call){
 		$stmt->execute(); 
 		echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
 		break;
+	case 'submit-form':
+		print_r($_POST);
+		break;
 	default:
 		echo json_encode("false");
 		break;
