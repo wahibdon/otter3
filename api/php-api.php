@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once('dbconn.inc');
 $call = $_GET['call'];
 switch ($call){
@@ -121,11 +122,37 @@ switch ($call){
 		echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
 		break;
 	case 'submit-form':
-		print_r($_POST);
+		$current_year = date('y');
+		$current_year = date('y');
+		$latest_job_num = $db->prepare('SELECT max(number) from jobs');
+		$latest_job_num->execute();
+		$latest_job_num = $latest_job_num->fetchColumn();
+		$latest_job_num_year = substr($latest_job_num, 0, 2);
+		$latest_job_num = substr($latest_job_num, 2);
+		if($current_year != $latest_job_num_year){
+			$latest_job_num = '0';
+			$latest_job_num_year = $current_year;
+		}
+		$latest_job_num++;
+		$latest_job_num = str_pad($latest_job_num, 3, "0", STR_PAD_LEFT);
+		$job_num = $latest_job_num_year.$latest_job_num;
+		$stmt = $db->prepare("insert into jobs (client_id, number, title, description, opened, type, creator, billing_status) values (:client_id, :number, :title, :description, :opened, :type, :creator, :billing_status)");
+		$stmt->bindParam(':client_id', $_POST['client']);
+		$stmt->bindParam(':number', $job_num);
+		$stmt->bindParam(':title',$_POST['title']);
+		$stmt->bindParam(':description',$_POST['description']);
+		$stmt->bindValue(':opened', date('Y-m-d'));
+		$stmt->bindParam(':type', $_POST['type']);
+		$stmt->bindParam(':creator', $_SESSION['id']);
+		$stmt->bindParam(':billing_status', $_POST['billing']);
+		$stmt->execute();
+		$client_prefix = $db->prepare("SELECT abbr from clients where id = :client_id");
+		$client_prefix->bindParam(":client_id", $_POST['client']);
+		$client_prefix->execute();
+		echo json_encode($client_prefix->fetchColumn().$job_num);
 		break;
 	default:
 		echo json_encode("false");
-		$stmt = $db->prepare("insert into jobs (client_id, ")
 		break;
 }
 function listTable($table){

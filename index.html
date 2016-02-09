@@ -69,7 +69,7 @@
 	<li><a href="#clients">clients</a></li>
 	<li><a href="#vendors">vendors</a></li>
 	<li><a href="#credentials">credentials</a></li>
-	<li><a href="#logout">logout</a></li>
+	<li><a id="login-out" href="#login-out"></a></li>
 </ul>
 
 <div id="otter">
@@ -188,7 +188,7 @@
 	</div>
 
 	<div id="add-job">
-		<input type="hidden" value="add-job" class="add-job-form" data-type="form">
+		<input type="hidden" id="form-name" value="add-job" class="add-job-form" data-type="form">
 		<select id="add-job-client-list" data-type="client" class="add-job-form">
 			<option value="0">[Select Client]</option>
 		</select>
@@ -252,7 +252,7 @@
 			<option value="0">[Billing]</option>
 		</select>
 		<button>Cancel</button>
-		<button id="create-job">Create Job</button>
+		<button id="create-job" class="submit-button" data-form="add-job-form" data-after="job/">Create Job</button>
 	</div>
 
 	<div id="add-client"></div>
@@ -298,6 +298,14 @@
 
 		<div class="report-area" id="time-CostForClient"><h2>Time &amp; Cost for Client</h2></div>
 
+
+	</div>
+
+	<div id="login">
+		<input type="hidden" value="login" class="login-form" data-type="form">
+		<input name="username" type="text" class="login-form" data-type="username">
+		<input name="password" type="password" class="login-form" data-type="password">
+		<button class="submit-button" data-form="login-form" data-after="home">Login</button>
 	</div>
 
 </div>
@@ -318,6 +326,23 @@
 <script type="text/javascript" src="/js/cal.js"></script>
 <script type="text/javascript" src="/js/quill.min.js"></script>
 <script type="text/javascript">
+	window.auth = false;
+	function checkAuth(){
+		xhr('/api/auth.php?call=check-auth', function(res){
+			console.log(res);
+			if (res == true)
+				window.auth = true;
+			else{
+				window.auth = false;
+				window.location.hash = "login-out";
+			}
+		});
+	}
+	var submitButtons = document.getElementsByClassName('submit-button');
+	for(var i=0;i<submitButtons.length;i++){
+		submitButtons[i].addEventListener('click', submitForm);
+	}
+	checkAuth();
 	var editors = [];
 	editors['add-job-editor'] = new Quill('#add-job-editor', {
 		modules: {
@@ -361,6 +386,18 @@
 	routes['add-client-contact'] = function(){showRoute('add-client-contact')};
 	routes['add-task'] = function(){showRoute('add-task')};
 	routes['show-task'] = function(){showRoute('show-task')};
+	routes['login-out'] = function(){
+		if (!window.auth){
+			showRoute('login');
+		}else{
+			xhr('/api/auth.php?call=logout', function(res){
+				if (res==true){
+					window.auth = false;
+					showRoute('login');
+				}
+			})
+		}
+	};
 
 	router(routes, window.hash);
 
@@ -377,7 +414,7 @@
 					elements[i].value=0;
 					break;
 				case 'INPUT':
-					if (elements[i].type=="text")
+					if (elements[i].type=="text" || elements[i].type == "password")
 						elements[i].value = '';
 					break;
 				default:
@@ -387,7 +424,8 @@
 		//window.history.back();
 	}
 
-	function submitForm(form){
+	function submitForm(e){
+		var form = e.target.dataset.form;
 		var elements = document.getElementsByClassName(form),
 			node = "",
 			data=new FormData();
@@ -405,11 +443,23 @@
 					break;
 			}
 		}
-		data.append('form', form);
-		xhr('/api/php-api.php?call=submit-form', function(res){
-			resetForm(form);
-			window.location.hash="job/CGL151082";
-		}, 'post', data);
+		//data.append('form', form);
+		if (form == 'login-form'){
+			xhr('/api/auth.php?call=login', function(res){
+				resetForm(form);
+				window.auth = res;
+				if(window.auth == true)
+					window.location.hash = '';
+			}, 'post', data);
+		}else{
+			xhr('/api/php-api.php?call=submit-form', function(res){
+				resetForm(form);
+				var location = e.target.dataset.after;
+				if (res !== true || res !== false)
+					location+=res
+				window.location.hash=location;
+			}, 'post', data);
+		}
 	}
 
 	function listClients(target){
@@ -453,7 +503,7 @@
 
 	function showJob(){
 		showRoute('job');
-		var job_number = window.location.hash.substring(1).split('/')[1].match(/[A-Za-z]{3}?([0-9]{5,6})/)[1];
+		var job_number = window.location.hash.substring(1).split('/')[1].match(/[0-9A-Za-z]{3}?([0-9]{5,6})/)[1];
 		xhr('/api/php-api.php?call=job&number='+job_number, function(response){
 			emptyElement([document.getElementById('client-and-number'),
 						  document.getElementById('job-title'),
@@ -554,6 +604,15 @@
 			window.hash = window.location.hash.substring(1).split('/')[0];
 			router(routes, window.hash);
 		}
+		var loginLink = document.getElementById('login-out');
+		if(window.auth == true){
+			if(loginLink.innerHTML != 'logout')
+				loginLink.innerHTML = "logout";
+		}else{
+			if(loginLink.innerHTML != 'login')
+				loginLink.innerHTML = "login";
+		}
+
 	}, 250);
 
 	function index(){
