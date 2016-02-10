@@ -13,3 +13,4 @@ require_once('api/dbconn.inc');
 		$latest_job_num++;
 		$latest_job_num = str_pad($latest_job_num, 3, "0", STR_PAD_LEFT);
 		$job_num = $latest_job_num_year.$latest_job_num;
+        echo $job_num+80;
