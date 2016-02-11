@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title></title>
+	<meta http-equiv="Content-Type" content="text/html;utf-8">
 	<link rel="stylesheet" type="text/css" href="/css/style.css">
 	<link rel="stylesheet" type="text/css" href="/css/quill.base.css">
 	<script type="text/javascript" src="/js/lib.js"></script>
@@ -45,7 +46,7 @@
 		<ul>
 			<li><a href="#">tasks</a></li>
 			<li><a href="#time">time card</a></li>
-			<li><a href="#time/add">add time</a></li>
+			<li><a href="#add-time">add time</a></li>
 		</ul>
 	</li>
 	<li>
@@ -60,8 +61,8 @@
 	<li>
 		<a href="#team">team</a>
 		<ul>
-			<li><a href="#tasks/team">team tasks</a></li>
-			<li><a href="#tasks/unassigned">unassigned tasks</a></li>
+			<li><a href="#tasks-team">team tasks</a></li>
+			<li><a href="#tasks-unassigned">unassigned tasks</a></li>
 		</ul>
 	</li>
 	<li><a href="#blog">blog</a></li>
@@ -278,8 +279,8 @@
 
 		<div class="report-area" id="adminTimeSheet">
 			<h2>Admin Timesheets</h2>
-			<input type="text" id="ats_start"><span class="calendar-button" data-target="ats_start">📅</span>
-			<input type="text" id="ats_end"><span class="calendar-button" data-target="ats_end">📅</span>
+			<input type="text" id="ats_start"><span class="calendar-button" data-target="ats_start"> &#x1f4c5;</span>
+			<input type="text" id="ats_end"><span class="calendar-button" data-target="ats_end"> &#x1f4c5;</span>
 			<button>Run Report</button>
 		</div>
 
@@ -298,6 +299,17 @@
 
 
 	</div>
+
+	<div id="time"></div>
+
+	<div id="add-time"></div>
+
+	<div id="team"></div>
+
+	<div id="tasks-team"></div>
+
+	<div id="tasks-unassigned"></div>
+
 
 	<div id="login">
 		<input type="hidden" value="login" class="login-form" data-type="form">
@@ -396,6 +408,11 @@
 			})
 		}
 	};
+	routes['time'] = function(){showRoute('time');};
+	routes['add-time'] = function(){showRoute('add-time');};
+	routes['team'] = function(){showRoute('team');};
+	routes['tasks-team'] = function(){showRoute('tasks-team');};
+	routes['tasks-unassigned'] = function(){showRoute('tasks-unassigned');};
 
 	router(routes, window.hash);
 
