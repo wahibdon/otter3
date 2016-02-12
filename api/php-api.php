@@ -8,8 +8,13 @@ switch ($call){
 		break;
 	case 'list-clients':
 		echo json_encode(listTable("clients"));
-	break;
-		case 'show-contact-vendor':
+		break;
+	case 'list-users':
+		$stmt=$db->prepare("select id, first, last from users where type!=0 order by first ASC");
+		$stmt->execute();
+		echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
+		break;
+	case 'show-contact-vendor':
 		switch ($_GET['type']) {
 			case 'vendors':
 				$table = 'vendor_contact';
@@ -45,8 +50,8 @@ switch ($call){
 					$stmt = $db->prepare("select jobs.*, abbr, users.first, users.last from jobs left join clients on jobs.client_id = clients.id left join users on users.id = jobs.creator where job_status like :status order by id DESC");
 					break;
 				case 'Job ':
-					preg_match('/^([A-Za-z]{3})([0-9]{5}|[0-9]{6})$/', $_GET['search_string'], $matches);
-					preg_match('/^[A-Za-z]{3}$/', $_GET['search_string'], $abbr);
+					preg_match('/^([0-9A-Za-z]{3})([0-9]{5,6})$/', $_GET['search_string'], $matches);
+					preg_match('/^[0-9A-Za-z]{3}$/', $_GET['search_string'], $abbr);
 					if(isset($matches[0])){
 						$stmt = $db->prepare("select jobs.*, abbr, users.first, users.last from jobs left join clients on jobs.client_id = clients.id left join users on users.id = jobs.creator where job_status like :status and (jobs.number=:number and abbr=:abbr) order by id DES");
 						$stmt->bindParam(':number', $matches[2]);
@@ -122,34 +127,80 @@ switch ($call){
 		echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
 		break;
 	case 'submit-form':
-		$current_year = date('y');
-		$current_year = date('y');
-		$latest_job_num = $db->prepare('SELECT max(number) from jobs');
-		$latest_job_num->execute();
-		$latest_job_num = $latest_job_num->fetchColumn();
-		$latest_job_num_year = substr($latest_job_num, 0, 2);
-		$latest_job_num = substr($latest_job_num, 2);
-		if($current_year != $latest_job_num_year){
-			$latest_job_num = '0';
-			$latest_job_num_year = $current_year;
+		switch ($_POST['form']){
+			case 'add-job':
+				$current_year = date('y');
+				$current_year = date('y');
+				$latest_job_num = $db->prepare('SELECT max(number) from jobs');
+				$latest_job_num->execute();
+				$latest_job_num = $latest_job_num->fetchColumn();
+				$latest_job_num_year = substr($latest_job_num, 0, 2);
+				$latest_job_num = substr($latest_job_num, 2);
+				if($current_year != $latest_job_num_year){
+					$latest_job_num = '0';
+					$latest_job_num_year = $current_year;
+				}
+				$latest_job_num++;
+				$latest_job_num = str_pad($latest_job_num, 3, "0", STR_PAD_LEFT);
+				$job_num = $latest_job_num_year.$latest_job_num;
+				$stmt = $db->prepare("insert into jobs (client_id, number, title, description, opened, type, creator, billing_status) values (:client_id, :number, :title, :description, :opened, :type, :creator, :billing_status)");
+				$stmt->bindParam(':client_id', $_POST['client'], PDO::PARAM_INT);
+				$stmt->bindParam(':number', $job_num, PDO::PARAM_INT);
+				$stmt->bindParam(':title',$_POST['title']);
+				$stmt->bindParam(':description',$_POST['description']);
+				$stmt->bindValue(':opened', date('Y-m-d'));
+				$stmt->bindParam(':type', $_POST['type'], PDO::PARAM_INT);
+				$stmt->bindParam(':creator', $_SESSION['id'], PDO::PARAM_INT);
+				$stmt->bindParam(':billing_status', $_POST['billing'], PDO::PARAM_INT);
+				$stmt->execute();
+				$client_prefix = $db->prepare("SELECT abbr from clients where id = :client_id");
+				$client_prefix->bindParam(":client_id", $_POST['client']);
+				$client_prefix->execute();
+				echo json_encode($client_prefix->fetchColumn().$job_num);
+				break;
+			case 'add-time':
+				preg_match('/^[0-9A-Za-z]{3}([0-9]{5,6})$/', $_POST['job'], $matches);
+				$timecard_prep = $db->prepare("INSERT IGNORE into time_card (user_id, date) values (:user_id, current_date())");
+				$timecard_prep->bindParam(':user_id', $_SESSION['id'], PDO::PARAM_INT);
+				$timecard_prep->execute();
+				$timecard = $db->prepare("select * from time_card where user_id=:user_id and date=current_date()");
+				$timecard->bindParam(':user_id', $_SESSION['id']);
+				$timecard->execute();
+				$time_card_info = $timecard->fetch(PDO::FETCH_OBJ);
+				$time = $db->prepare("insert into times (timecard_id, code, totaltime, summary, job_id, cost) values (:timecard_id, :code, :totaltime, :summary, (select id from jobs where number = :number), (select `{$_POST['code']}` from timecodes where client_id = (select client_id from jobs where number = :number) or client_id=0 order by client_id DESC limit 0,1) * :totaltime)");
+				$time->bindParam(':timecard_id', $time_card_info->id, PDO::PARAM_INT);
+				$time->bindParam(':code', $_POST['code'], PDO::PARAM_INT);
+				$time->bindValue(':totaltime', $_POST['hours'].$_POST['minutes'], PDO::PARAM_INT);
+				$time->bindParam(':summary', $_POST['summary']);
+				$time->bindParam(':number', $matches[1], PDO::PARAM_INT);
+				$time->execute();
+				echo json_encode(true);
+				break;
+			case 'add-task':
+				preg_match('/^[0-9A-Za-z]{3}([0-9]{5,6})$/', $_POST['job'], $matches);
+				$task = $db->prepare("insert into tasks (title, summary, due, job_id, creator) values (:title, :summary, :due, (select id from jobs where number = :number), :creator)");
+				$task->bindParam(':title', $_POST['title']);
+				$task->bindParam(':summary', $_POST['description']);
+				$task->bindValue(':due', $_POST['date']." ".$_POST['due']);
+				$task->bindParam(':number', $matches[1], PDO::PARAM_INT);
+				$task->bindParam(':creator', $_SESSION['id'], PDO::PARAM_INT);
+				$task->execute();
+				$task_id = $db->lastInsertId();
+				$users = explode(',', $_POST['users']);
+//				$users_count = count($users);
+//				$qmarks = [];
+//				for($i=0; $i<$users_count; $i++)
+//					$qmars[] = "?";
+//				$qmarks = implode(',', $qmarks);
+				$users_tasks = $db->prepare("insert into task_users (task_id, user_id) values (:task_id, :user_id)");
+				$users_tasks->bindParam(":task_id", $task_id);
+				for($i=0; $i<count($users); $i++){
+					$users_tasks->bindParam(":user_id", $users[$i]);
+					$users_tasks->execute();
+				}
+				echo json_encode(true);
+				break;
 		}
-		$latest_job_num++;
-		$latest_job_num = str_pad($latest_job_num, 3, "0", STR_PAD_LEFT);
-		$job_num = $latest_job_num_year.$latest_job_num;
-		$stmt = $db->prepare("insert into jobs (client_id, number, title, description, opened, type, creator, billing_status) values (:client_id, :number, :title, :description, :opened, :type, :creator, :billing_status)");
-		$stmt->bindParam(':client_id', $_POST['client']);
-		$stmt->bindParam(':number', $job_num);
-		$stmt->bindParam(':title',$_POST['title']);
-		$stmt->bindParam(':description',$_POST['description']);
-		$stmt->bindValue(':opened', date('Y-m-d'));
-		$stmt->bindParam(':type', $_POST['type']);
-		$stmt->bindParam(':creator', $_SESSION['id']);
-		$stmt->bindParam(':billing_status', $_POST['billing']);
-		$stmt->execute();
-		$client_prefix = $db->prepare("SELECT abbr from clients where id = :client_id");
-		$client_prefix->bindParam(":client_id", $_POST['client']);
-		$client_prefix->execute();
-		echo json_encode($client_prefix->fetchColumn().$job_num);
 		break;
 	default:
 		echo json_encode("false");

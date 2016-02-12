@@ -418,9 +418,34 @@ div.quill-editor {
 	height: 400px;
 	overflow: auto;
 }
-#formatting-container {
+#formatting-container, #task-formatting-container {
 	background-color: #ccc;
 	border: 1px solid #777;
 	border-bottom-width: 0;
 	padding: 3px;
+}
+#time-code-list dt {
+	background-color: #888;
+	color: #fff;
+}
+
+#time-code-list dd {
+	padding: 10px;
+}
+#time-code-list dd:hover {
+	background-color: #777;
+	color: #fff;
+	cursor: pointer;
+}
+
+#time-code-list dl {
+	box-sizing: border-box;
+	margin-right: 5px;
+	width: calc(20% - 5px);
+	float: left;
+	margin-top: 10px;
+}
+
+.submit-button {
+	clear: both;
 }

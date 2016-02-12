@@ -108,18 +108,18 @@
 		<div id="job-link">
 			<ul>
 				<li>Overview</li>
-				<li>Tasks</li>
+				<li><a href="#show-task">Tasks</a></li>
 				<li>Art</li>
 				<li>Invoices</li>
 			</ul>
 			<ul>
 				<li>Edit Project</li>
-				<li>Create Task</li>
-				<li>Add Time</li>
-				<li>Add Expense</li>
-				<li>Add Estimate</li>
-				<li>Add Invoice</li>
-				<li>Add Art</li>
+				<li><a href="#add-task" id="create-task-button">Create Task</a></li>
+				<li><a href="#add-time">Add Time</a></li>
+				<li><a href="#add-expense">Add Expense</a></li>
+				<li><a href="#add-estimate">Add Estimate</a></li>
+				<li><a href="#add-invoice">Add Invoice</a></li>
+				<li><a href="add-art">Add Art</a></li>
 			</ul>
 		</div>
 		<div id="job-details">
@@ -262,7 +262,118 @@
 
     <div id="add-client-contact"></div>
 
-	<div id="add-task"></div>
+	<div id="add-task">
+		<input type="hidden" value="add-task" class="add-task-form" data-type="form">
+		<input type="text" id="add-task-job" class="add-task-form" data-type="job" placeholder="Job">
+		<input type="text" class="add-task-form" data-type="title" placeholder="Title">
+		<input type="text" class="add-task-form" data-type="date" id="at-date" placeholder="Date"><span class="calendar-button" data-target="at-date"> &#x1f4c5;</span>
+		<select class="add-task-form" data-type="due">
+			<option value="00:00:00">12:00am</option>
+			<option value="00:30:00">12:30am</option>
+			<option value="01:00:00">1:00am</option>
+			<option value="01:30:00">1:30am</option>
+			<option value="02:00:00">2:00am</option>
+			<option value="02:30:00">2:30am</option>
+			<option value="03:00:00">3:00am</option>
+			<option value="03:30:00">3:30am</option>
+			<option value="04:00:00">4:00am</option>
+			<option value="04:30:00">4:30am</option>
+			<option value="05:00:00">5:00am</option>
+			<option value="05:30:00">5:30am</option>
+			<option value="06:00:00">6:00am</option>
+			<option value="06:30:00">6:30am</option>
+			<option value="07:00:00">7:00am</option>
+			<option value="07:30:00">7:30am</option>
+			<option value="08:00:00">8:00am</option>
+			<option value="08:30:00">8:30am</option>
+			<option value="09:00:00">9:00am</option>
+			<option value="09:30:00">9:30am</option>
+			<option value="10:00:00">10:00am</option>
+			<option value="10:30:00">10:30am</option>
+			<option value="11:00:00">11:00am</option>
+			<option value="11:30:00">11:30am</option>
+			<option value="12:00:00">12:00pm</option>
+			<option value="12:30:00">12:30pm</option>
+			<option value="13:00:00">1:00pm</option>
+			<option value="13:30:00">1:30pm</option>
+			<option value="14:00:00">2:00pm</option>
+			<option value="14:30:00">2:30pm</option>
+			<option value="15:00:00">3:00pm</option>
+			<option value="15:30:00">3:30pm</option>
+			<option value="16:00:00">4:00pm</option>
+			<option value="16:30:00">4:30pm</option>
+			<option value="17:00:00" selected>5:00pm</option>
+			<option value="17:30:00">5:30pm</option>
+			<option value="18:00:00">6:00pm</option>
+			<option value="18:30:00">6:30pm</option>
+			<option value="19:00:00">7:00pm</option>
+			<option value="19:30:00">7:30pm</option>
+			<option value="20:00:00">8:00pm</option>
+			<option value="20:30:00">8:30pm</option>
+			<option value="21:00:00">9:00pm</option>
+			<option value="21:30:00">9:30pm</option>
+			<option value="22:00:00">10:00pm</option>
+			<option value="22:30:00">10:30pm</option>
+			<option value="23:00:00">11:00pm</option>
+			<option value="23:30:00">11:30pm</option>
+		</select>
+		<div id="task-content-container">
+			<div id="task-editor-wrapper">
+			<div id="task-formatting-container">
+				<select title="Font" class="ql-font">
+					<option value="sans-serif" selected>Sans Serif</option>
+					<option value="Georgia, serif">Serif</option>
+					<option value="Monaco, 'Courier New', monospace">Monospace</option>
+				</select>
+				<select title="Size" class="ql-size">
+					<option value="10px">Small</option>
+					<option value="13px" selected>Normal</option>
+					<option value="18px">Large</option>
+					<option value="32px">Huge</option>
+				</select>
+				<select title="Text Color" class="ql-color">
+					<option value="rgb(255, 255, 255)">White</option>
+					<option value="rgb(0, 0, 0)" selected>Black</option>
+					<option value="rgb(255, 0, 0)">Red</option>
+					<option value="rgb(0, 0, 255)">Blue</option>
+					<option value="rgb(0, 255, 0)">Lime</option>
+					<option value="rgb(0, 128, 128)">Teal</option>
+					<option value="rgb(255, 0, 255)">Magenta</option>
+					<option value="rgb(255, 255, 0)">Yellow</option>
+				</select>
+				<select title="Background Color" class="ql-background">
+					<option value="rgb(255, 255, 255)" selected>White</option>
+					<option value="rgb(0, 0, 0)">Black</option>
+					<option value="rgb(255, 0, 0)">Red</option>
+					<option value="rgb(0, 0, 255)">Blue</option>
+					<option value="rgb(0, 255, 0)">Lime</option>
+					<option value="rgb(0, 128, 128)">Teal</option>
+					<option value="rgb(255, 0, 255)">Magenta</option>
+					<option value="rgb(255, 255, 0)">Yellow</option>
+				</select>
+				<select title="Text Alignment" class="ql-align">
+					<option value="left" selected>Left</option>
+					<option value="center">Center</option>
+					<option value="right">Right</option>
+					<option value="justify">Justify</option>
+				</select>
+				<button title="Bold" class="ql-format-button ql-bold">Bold</button>
+				<button title="Italic" class="ql-format-button ql-italic">Italic</button>
+				<button title="Underline" class="ql-format-button ql-underline">Under</button>
+				<button title="Strikethrough" class="ql-format-button ql-strike">Strike</button>
+				<button title="Link" class="ql-format-button ql-link">Link</button>
+				<button title="Image" class="ql-format-button ql-image">Image</button>
+				<button title="Bullet" class="ql-format-button ql-bullet">Bullet</button>
+				<button title="List" class="ql-format-button ql-list">List</button>
+			</div>
+			<div id="add-task-editor" data-type="description" class="add-task-form quill-editor"></div>
+			</div>
+		</div>
+		<select class="add-task-form" id="add-task-user-list" data-type="users" multiple>
+			<option value="0" class="no-hide" selected>Unassigned</option>
+		</select>
+		<button class="submit-button" data-form="add-task-form" data-after="job/">Save</button>
+	</div>
 
 	<div id="show-task"></div>
 
@@ -302,20 +413,89 @@
 
 	<div id="time"></div>
 
-	<div id="add-time"></div>
+	<div id="add-time">
+		<input type="hidden" value="add-time" class="add-time-form" data-type="form">
+		<input type="text" class="add-time-form" data-type="job" placeholder="Job">
+		<select class="add-time-form" data-type="hours">
+			<option vlaue="">Hours</option>
+			<option value="0">0</option>
+			<option value="1">1</option>
+			<option value="2">2</option>
+			<option value="3">3</option>
+			<option value="4">4</option>
+			<option value="5">5</option>
+			<option value="6">6</option>
+			<option value="7">7</option>
+			<option value="8">8</option>
+		</select>
+		<select class="add-time-form" data-type="minutes">
+			<option vlaue="">Minutes</option>
+			<option value="0">0</option>
+			<option value=".25">15</option>
+			<option value=".5">30</option>
+			<option value=".75">45</option>
+		</select>
+		<input type="text" class="add-time-form" data-type="summary" placeholder="Summary">
+		<input type="text" id="add-time-form-time-code" class="add-time-form" data-type="code" placeholder="Time Code">
+		<div id="time-code-list">
+			<dl>
+				<dt>Account Services</dt>
+				<dd class="time-code-button" data-code="101">101 - Admin (Non Billable)</dd>
+				<dd class="time-code-button" data-code="103">103 - Strategic Planning</dd>
+				<dd class="time-code-button" data-code="104">104 - Research</dd>
+				<dd class="time-code-button" data-code="107">107 - Account Coordination</dd>
+			</dl>
+			<dl>
+				<dt>Creative Services</dt>
+				<dd class="time-code-button" data-code="201">201 - Concept Development</dd>
+				<dd class="time-code-button" data-code="202">202 - Design/Layout/Art Direction</dd>
+				<dd class="time-code-button" data-code="203">203 - Copywriting</dd>
+			</dl>
+			<dl>
+				<dt>Production Services</dt>
+				<dd class="time-code-button" data-code="204">204 - Electronic Production</dd>
+				<dd class="time-code-button" data-code="205">205 - Electronic Imaging</dd>
+				<dd class="time-code-button" data-code="206">206 - File Transfer/Maintenance</dd>
+				<dd class="time-code-button" data-code="208">208 - Proofs (Color/B&amp;W)</dd>
+				<dd class="time-code-button" data-code="209">209 - Printing Supervision</dd>
+				<dd class="time-code-button" data-code="211">211 - Illustration</dd>
+				<dd class="time-code-button" data-code="212">212 - Production Supervision</dd>
+			</dl>
+			<dl>
+				<dt>Multimedia</dt>
+				<dd class="time-code-button" data-code="301">301 - Audio Production</dd>
+				<dd class="time-code-button" data-code="302">302 - Video Production</dd>
+				<dd class="time-code-button" data-code="303">303 - Media Trafficking TV</dd>
+				<dd class="time-code-button" data-code="304">304 - Web Design</dd>
+				<dd class="time-code-button" data-code="305">305 - Web Development</dd>
+			</dl>
+			<dl>
+				<dt>Misc</dt>
+				<dd class="time-code-button" data-code="401">401 - Electronic Scanning</dd>
+				<dd class="time-code-button" data-code="402">402 - Production Meetings</dd>
+				<dd class="time-code-button" data-code="403">403 - Proofreading</dd>
+			</dl>
+		</div>
+		<button class="submit-button" data-form="add-time-form" data-after="">Save</button>
+	</div>
 
 	<div id="team"></div>
 
 	<div id="tasks-team"></div>
 
 	<div id="tasks-unassigned"></div>
+	
+	<div id="add-expense"></div>
+	<div id="add-estimate"></div>
+	<div id="add-invoice"></div>
+	<div id="add-art"></div>
 
 
 	<div id="login">
 		<input type="hidden" value="login" class="login-form" data-type="form">
-		<input name="username" type="text" class="login-form" data-type="username">
-		<input name="password" type="password" class="login-form" data-type="password">
-		<button class="submit-button" data-form="login-form" data-after="home">Login</button>
+		<input name="username" type="text" class="login-form" data-type="username" placeholder="Username">
+		<input name="password" type="password" class="login-form" data-type="password" placeholder="Password">
+		<button class="submit-button" data-form="login-form" data-after="">Login</button>
 	</div>
 
 </div>
@@ -348,6 +528,9 @@
 			}
 		});
 	}
+	addEventToAllOfClass(document.getElementsByClassName('time-code-button'), 'click', function(e){
+		document.getElementById('add-time-form-time-code').value = e.target.dataset.code;
+	});
 	var submitButtons = document.getElementsByClassName('submit-button');
 	for(var i=0;i<submitButtons.length;i++){
 		submitButtons[i].addEventListener('click', submitForm);
@@ -357,6 +540,13 @@
 	editors['add-job-editor'] = new Quill('#add-job-editor', {
 		modules: {
 			'toolbar': { container: '#formatting-container' },
+			'link-tooltip': true,
+			'image-tooltip': true
+		}
+	});
+	editors['add-task-editor'] = new Quill('#add-task-editor', {
+		modules: {
+			'toolbar': { container: '#task-formatting-container' },
 			'link-tooltip': true,
 			'image-tooltip': true
 		}
@@ -394,7 +584,20 @@
 	routes['add-client'] = function(){showRoute('add-client')};
 	routes['add-vendor'] = function(){showRoute('add-vendor')};
 	routes['add-client-contact'] = function(){showRoute('add-client-contact')};
-	routes['add-task'] = function(){showRoute('add-task')};
+	routes['add-task'] = function(){
+		document.getElementById('add-task-job').value = document.getElementById('create-task-button').dataset.jobNumber
+		xhr('/api/php-api.php?call=list-users', function(res){
+			var select = document.getElementById('add-task-user-list'), option;
+			emptyElement([select]);
+			for (var i=0; i<res.length; i++){
+				option = document.createElement('option');
+				option.value = res[i].id;
+				option.appendChild(document.createTextNode(res[i].first+' '+res[i].last));
+				select.appendChild(option);
+			}
+			console.log(res);
+		})
+		showRoute('add-task')};
 	routes['show-task'] = function(){showRoute('show-task')};
 	routes['login-out'] = function(){
 		if (!window.auth){
@@ -413,6 +616,10 @@
 	routes['team'] = function(){showRoute('team');};
 	routes['tasks-team'] = function(){showRoute('tasks-team');};
 	routes['tasks-unassigned'] = function(){showRoute('tasks-unassigned');};
+	routes['add-expense']=function(){showRoute('add-expense');};
+	routes['add-estimate']=function(){showRoute('add-estimate');};
+	routes['add-invoice']=function(){showRoute('add-invoice');};
+	routes['add-art']=function(){showRoute('add-art');};
 
 	router(routes, window.hash);
 
@@ -443,6 +650,7 @@
 		var form = e.target.dataset.form;
 		var elements = document.getElementsByClassName(form),
 			node = "",
+			selected,
 			data=new FormData();
 		for(var i=0; i<elements.length; i++){
 			node = elements[i].nodeName;
@@ -451,6 +659,17 @@
 					data.append(elements[i].dataset.type, editors[elements[i].id].getHTML());
 					break;
 				case 'SELECT':
+					if(elements[i].multiple){
+						selected = [];
+						for (var option=0; option<elements[i].length; option++){
+							if (elements[i][option].selected)
+								selected.push(elements[i][option].value);
+						}
+						data.append(elements[i].dataset.type, selected);
+					}else{
+						data.append(elements[i].dataset.type, elements[i].value);
+					}
+					break;
 				case 'INPUT':
 					data.append(elements[i].dataset.type, elements[i].value);
 					break;
@@ -531,6 +750,7 @@
 						  document.getElementById('job-created'),
 						  document.getElementById('job-closed')]);
 			document.getElementById('client-and-number').appendChild(document.createTextNode(response[0].name+" - "+response[0].abbr+response[0].number+" | "));
+			document.getElementById('create-task-button').dataset.jobNumber = response[0].abbr+response[0].number;
 			document.getElementById('job-title').appendChild(document.createTextNode(response[0].title));
 			document.getElementById('job-status').appendChild(document.createTextNode(JSTATUS[response[0].job_status]));
 			document.getElementById('job-type').appendChild(document.createTextNode(JTYPE[response[0].type]));
@@ -865,7 +1085,7 @@
 		if(!element.length)
 			element = [element];
 		var child, reserve;
-		for(list in element){
+		for(var list=0; list<element.length; list++){
 			reserve = [];
 			while (element[list].lastChild){
 				try{
@@ -880,7 +1100,7 @@
 					element[list].removeChild(element[list].lastChild);
 				}
 			}
-			for (e in reserve)
+			for (var e=0; e<reserve.length; e++)
 				element[list].appendChild(reserve[e]);
 		}
 	}
