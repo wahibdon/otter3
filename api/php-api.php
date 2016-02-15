@@ -33,6 +33,12 @@ switch ($call){
 		$stmt->execute();
 		echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
 		break;
+	case 'show-tasks':
+		$stmt = $db->prepare("select * from tasks where job_id=(select id from jobs where number = :number)");
+		$stmt->bindParam(":number", $_GET['job'], PDO::PARAM_INT);
+		$stmt->execute();
+		echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
+		break;
 	case 'job-search':
 		if(!isset($_GET['page']) || !isset($_GET['status']))
 			break;
@@ -113,7 +119,10 @@ switch ($call){
 			$art = $db->prepare("select art.*, concat(users.first, ' ', users.last) added_by from art left join jobs on art.job_id=jobs.id left join users on art.added_by = users.id where jobs.number = :number");
 			$art->bindValue(":number", $_GET['number']);
 			$art->execute();
-			echo json_encode(["estimates"=>$estimates->fetchAll(PDO::FETCH_OBJ), "times"=>$times->fetchAll(PDO::FETCH_OBJ), "timecodes" => $timecodes->fetchAll(PDO::FETCH_OBJ)[0], "expenses" => $expenses->fetchAll(PDO::FETCH_OBJ), "invoices" => $invoices->fetchAll(PDO::FETCH_OBJ), "art" => $art->fetchAll(PDO::FETCH_OBJ)]);
+			$tasks = $db->prepare("SELECT tasks.id, tasks.title `task-title`, GROUP_CONCAT(concat(first, ' ', last)) as names, created, due, status FROM jobs left join tasks on jobs.id = tasks.job_id left join otter3.task_users on tasks.id = task_users.task_id left join users on users.id = user_id where jobs.number = :number group by task_id");
+			$tasks->bindValue(":number", $_GET['number']);
+			$tasks->execute();
+			echo json_encode(["estimates"=>$estimates->fetchAll(PDO::FETCH_OBJ), "times"=>$times->fetchAll(PDO::FETCH_OBJ), "timecodes" => $timecodes->fetchAll(PDO::FETCH_OBJ)[0], "expenses" => $expenses->fetchAll(PDO::FETCH_OBJ), "invoices" => $invoices->fetchAll(PDO::FETCH_OBJ), "art" => $art->fetchAll(PDO::FETCH_OBJ), "tasks" => $tasks->fetchAll(PDO::FETCH_OBJ)]);
 		}
 		break;
 	case 'credentials':
