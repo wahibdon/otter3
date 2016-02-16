@@ -41,7 +41,6 @@ function authenticate($user, $password) {
 		$stmt = $db->prepare("SELECT * from users where username = :username");
 		$stmt->bindParam(':username', $user);
 		$stmt->execute();
-		echo ($stmt->fetchAll(PDO::FETCH_OBJ));
 		$user_properties = $stmt->fetchAll(PDO::FETCH_OBJ);
 		//print_r($user_properties);
 		foreach ($user_properties[0] as $property=>$value){
