@@ -123,7 +123,7 @@
 				<li class="job-links" id="show-job-invoice" data-target="job-invoices">Invoices</li>
 			</ul>
 			<ul>
-				<li>Edit Project</li>
+				<li id="project-edit">Edit Project</li>
 				<li><a href="#add-task" id="create-task-button">Create Task</a></li>
 				<li><a href="#add-time">Add Time</a></li>
 				<li><a href="#add-expense">Add Expense</a></li>
@@ -215,11 +215,12 @@
 	</div>
 
 	<div id="add-job">
-		<input type="hidden" id="form-name" value="add-job" class="add-job-form" data-type="form">
+		<input type="hidden" value="add-job" class="add-job-form" data-type="form">
+		<input type="hidden" id="job-id" class="add-job-form" data-type="id">
 		<select id="add-job-client-list" data-type="client" class="add-job-form">
 			<option value="0">[Select Client]</option>
 		</select>
-		<input type="text" class="add-job-form" data-type="title">
+		<input type="text" id="add-job-title" class="add-job-form" data-type="title">
 		<select class="add-job-form" id="add-job-type-list" data-type="type">
 			<option value="0">[Job Type]</option>
 		</select>
@@ -278,8 +279,13 @@
 		<select id="add-job-billing-list" class="add-job-form" data-type="billing">
 			<option value="0">[Billing]</option>
 		</select>
+		<select id="add-job-staus-list" class="add-job-form" data-type="status">
+			<option value="1" selected>Open</option>
+			<option value="2">On-Hold</option>
+			<option value="3">Closed</option>
+		</select>
 		<button>Cancel</button>
-		<button id="create-job" class="submit-button" data-form="add-job-form" data-after="job/">Create Job</button>
+		<button id="create-job" class="submit-button" data-form="add-job-form" data-after="job/">Save</button>
 	</div>
 
 	<div id="add-client"></div>
@@ -652,6 +658,17 @@
 			window.location.hash = "#task/"+taskNumber;
 		});
 	});
+	document.getElementById('project-edit').addEventListener('click', function(e){
+		var project_info = JSON.parse(e.target.dataset.information);
+		document.getElementById('job-id').value = project_info.id
+		document.getElementById('add-job-client-list').value = project_info.client_id;
+		document.getElementById('add-job-title').value = project_info.title;
+		document.getElementById('add-job-type-list').value = project_info.type;
+		document.getElementById('add-job-editor').innerHTML = project_info.description;
+		document.getElementById('add-job-billing-list').value = project_info.billing_status;
+		document.getElementById('add-job-staus-list').value = project_info.job_status;
+		window.location.hash = 'add-job';
+	});
 
 	function search(e){
 		if((e.type == 'keypress' && e.keyCode == '13') || e.type=="click")
@@ -843,13 +860,6 @@
 	routes['add-estimate']=function(){showRoute('add-estimate');};
 	routes['add-invoice']=function(){showRoute('add-invoice');};
 	routes['add-art']=function(){showRoute('add-art');};
-	/*routes['show-tasks']=function(){
-		var jobNumber = document.getElementById('show-tasks-button').dataset.jobNumber;
-		xhr('/api/php-api.php?call=show-tasks&job='+jobNumber, function(res){
-
-		})
-		showRoute('show-tasks');
-	};*/
 
 	router(routes, window.hash);
 
@@ -992,6 +1002,7 @@
 			document.getElementById('job-created').appendChild(document.createTextNode(response[0].opened));
 			document.getElementById('job-closed').appendChild(document.createTextNode(response[0].closed));
 			document.getElementById('job-description').innerHTML = response[0].description;
+			document.getElementById('project-edit').dataset.information = JSON.stringify(response[0]);
 		});
 		xhr('/api/php-api.php?call=job-additional&number='+job_number, function(response){
 			emptyElement([document.getElementById('client-and-number'),

@@ -70,13 +70,13 @@ switch ($call){
 					$stmt = $db->prepare("select jobs.*, abbr, users.first, users.last from jobs left join clients on jobs.client_id = clients.id left join users on users.id = jobs.creator where job_status like :status order by id DESC");
 					break;
 				case 'Job ':
-					preg_match('/^([0-9A-Za-z]{3})([0-9]{5,6})$/', $_GET['search_string'], $matches);
+					preg_match('/^([0-9A-Za-z]{3})?([0-9]{5,6})$/', $_GET['search_string'], $matches);
 					preg_match('/^[0-9A-Za-z]{3}$/', $_GET['search_string'], $abbr);
 					if(isset($matches[0])){
-						$stmt = $db->prepare("select jobs.*, abbr, users.first, users.last from jobs left join clients on jobs.client_id = clients.id left join users on users.id = jobs.creator where job_status like :status and (jobs.number=:number and abbr=:abbr) order by id DES");
+						$stmt = $db->prepare("select jobs.*, abbr, users.first, users.last from jobs left join clients on jobs.client_id = clients.id left join users on users.id = jobs.creator where job_status like :status and (jobs.number=:number and abbr like :abbr) order by id DESC");
 						$stmt->bindParam(':number', $matches[2]);
 						$stmt->bindParam(':abbr', $matches[1]);
-					}else if($abbr[0]){
+					}else if(isset($abbr[0])){
 						$stmt = $db->prepare("select jobs.*, abbr, users.first, users.last from jobs left join clients on jobs.client_id = clients.id left join users on users.id = jobs.creator where job_status like :status and (abbr=:abbr) order by id DESC");
 						$stmt->bindParam(':abbr', $abbr[0]);
 					}else {
@@ -118,6 +118,8 @@ switch ($call){
 		$stmt->bindParam(':task_id', $_GET['task_id'], PDO::PARAM_INT);
 		$stmt->bindParam(':user_id', $_SESSION['id'], PDO::PARAM_INT);
 		$stmt->execute();
+		//$email_info = $db->prepare("");
+		//mail($admin_email, "$subject", $comment, "From:" . $email);
 		echo json_encode(true);
 		break;
 	case 'job-additional':
@@ -173,7 +175,8 @@ switch ($call){
 				$latest_job_num++;
 				$latest_job_num = str_pad($latest_job_num, 3, "0", STR_PAD_LEFT);
 				$job_num = $latest_job_num_year.$latest_job_num;
-				$stmt = $db->prepare("insert into jobs (client_id, number, title, description, opened, type, creator, billing_status) values (:client_id, :number, :title, :description, :opened, :type, :creator, :billing_status)");
+				$stmt = $db->prepare("insert into jobs (id, client_id, number, title, description, opened, type, creator, billing_status, job_status) values (:id, :client_id, :number, :title, :description, :opened, :type, :creator, :billing_status, :job_status) on duplicate key update client_id = :client_id, number=:number, title=:title, description=:description, billing_status=:billing_status, job_status=:job_status");
+				$stmt->bindParam(':id', $_POST['client'], PDO::PARAM_INT);
 				$stmt->bindParam(':client_id', $_POST['client'], PDO::PARAM_INT);
 				$stmt->bindParam(':number', $job_num, PDO::PARAM_INT);
 				$stmt->bindParam(':title',$_POST['title']);
@@ -182,10 +185,12 @@ switch ($call){
 				$stmt->bindParam(':type', $_POST['type'], PDO::PARAM_INT);
 				$stmt->bindParam(':creator', $_SESSION['id'], PDO::PARAM_INT);
 				$stmt->bindParam(':billing_status', $_POST['billing'], PDO::PARAM_INT);
+				$stmt->bindParam(':job_status', $_POST['status'], PDO::PARAM_INT);
 				$stmt->execute();
 				$client_prefix = $db->prepare("SELECT abbr from clients where id = :client_id");
 				$client_prefix->bindParam(":client_id", $_POST['client']);
 				$client_prefix->execute();
+				//mail($admin_email, "$subject", $comment, "From:" . $email);
 				echo json_encode($client_prefix->fetchColumn().$job_num);
 				break;
 			case 'add-time':
@@ -253,4 +258,13 @@ function listTable($table){
 	$stmt = $db->prepare("select * from $table order by name");
 	$stmt->execute();
 	return $stmt->fetchAll(PDO::FETCH_OBJ);
+}
+function email($from, $to, $description, $title, $job_num, $date, $new_complete){
+	if ($new_complete == 'new'){
+
+	}elseif($new_complete == 'complete'){
+
+	}else{
+		return;
+	}
 }
