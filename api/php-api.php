@@ -14,6 +14,12 @@ switch ($call){
 		$stmt->execute();
 		echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
 		break;
+	case 'home-task-list':
+		$stmt = $db->prepare("SELECT *, jobs.title as job_title, clients.abbr, tasks.title FROM otter3.task_users left join tasks on task_users.task_id = tasks.id left join users on users.id=task_users.user_id left join jobs on tasks.job_id = jobs.id left join clients on clients.id = jobs.client_id where users.id=:uid and task_users.status != 1");
+		$stmt->bindParam(':uid', $_SESSION['id'], PDO::PARAM_INT);
+		$stmt->execute();
+		echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
+		break;
 	case 'show-contact-vendor':
 		switch ($_GET['type']) {
 			case 'vendors':
@@ -33,11 +39,19 @@ switch ($call){
 		$stmt->execute();
 		echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
 		break;
-	case 'show-tasks':
-		$stmt = $db->prepare("select * from tasks where job_id=(select id from jobs where number = :number)");
-		$stmt->bindParam(":number", $_GET['job'], PDO::PARAM_INT);
+	case 'list-team':
+		$stmt = $db->prepare("select * from users where type != 0");
 		$stmt->execute();
 		echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
+		break;
+	case 'show-task':
+		$stmt = $db->prepare("select tasks.*, users.first, users.last, jobs.number, clients.abbr from tasks left join users on creator=users.id left join jobs on jobs.id=tasks.job_id left join clients on jobs.client_id = clients.id where tasks.id=:task_id");
+		$stmt->bindParam(":task_id", $_GET['task_id'], PDO::PARAM_INT);
+		$stmt->execute();
+		$users_assign = $db->prepare("select * from task_users left join users on task_users.user_id = users.id where task_id = :task_id");
+		$users_assign->bindParam(":task_id", $_GET['task_id'], PDO::PARAM_INT);
+		$users_assign->execute();
+		echo json_encode(['task' => $stmt->fetchAll(PDO::FETCH_OBJ), 'users' => $users_assign->fetchAll(PDO::FETCH_OBJ)]);
 		break;
 	case 'job-search':
 		if(!isset($_GET['page']) || !isset($_GET['status']))
@@ -98,6 +112,13 @@ switch ($call){
 			$stmt->execute();
 			echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
 		}
+		break;
+	case 'task-done':
+		$stmt = $db->prepare('update task_users set status=1 where task_id = :task_id and user_id=:user_id');
+		$stmt->bindParam(':task_id', $_GET['task_id'], PDO::PARAM_INT);
+		$stmt->bindParam(':user_id', $_SESSION['id'], PDO::PARAM_INT);
+		$stmt->execute();
+		echo json_encode(true);
 		break;
 	case 'job-additional':
 		if(isset($_GET['number'])){
@@ -196,11 +217,6 @@ switch ($call){
 				$task->execute();
 				$task_id = $db->lastInsertId();
 				$users = explode(',', $_POST['users']);
-//				$users_count = count($users);
-//				$qmarks = [];
-//				for($i=0; $i<$users_count; $i++)
-//					$qmars[] = "?";
-//				$qmarks = implode(',', $qmarks);
 				$users_tasks = $db->prepare("insert into task_users (task_id, user_id) values (:task_id, :user_id)");
 				$users_tasks->bindParam(":task_id", $task_id);
 				for($i=0; $i<count($users); $i++){
@@ -210,6 +226,23 @@ switch ($call){
 				echo json_encode(true);
 				break;
 		}
+		break;
+	case "team-tasks":
+		$stmt = $db->prepare("SELECT *, jobs.title as job_title, clients.abbr, tasks.title FROM otter3.task_users left join tasks on task_users.task_id = tasks.id left join users on users.id=task_users.user_id left join jobs on tasks.job_id = jobs.id left join clients on clients.id = jobs.client_id where users.type != 0 and status !=1 order by first;");
+		$stmt->execute();
+		echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
+		break;
+	case "unassigned-tasks":
+		$stmt = $db->prepare("SELECT tasks.*, jobs.number, jobs.title as job_title, clients.abbr, task_users.task_id FROM tasks left join jobs on jobs.id = tasks.job_id left join clients on clients.id=jobs.client_id left join task_users on task_users.task_id = tasks.id where task_users.task_id is NULL order by tasks.id DESC limit 1, 500");
+		$stmt->execute();
+		echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
+		break;
+	case "claim-task":
+		$stmt = $db->prepare("insert into task_users (task_id, user_id) values (:task_id, :user_id);");
+		$stmt->bindParam(":task_id", $_GET['task_id'], PDO::PARAM_INT);
+		$stmt->bindParam(":user_id", $_SESSION['id'], PDO::PARAM_INT);
+		$stmt->execute();
+		echo json_encode(true);
 		break;
 	default:
 		echo json_encode("false");

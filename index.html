@@ -44,7 +44,6 @@
 	<li>
 		<a href="#" class="active">my stuff</a>
 		<ul>
-			<li><a href="#">tasks</a></li>
 			<li><a href="#time">time card</a></li>
 			<li><a href="#add-time">add time</a></li>
 		</ul>
@@ -75,7 +74,18 @@
 
 <div id="otter">
 
-	<div id="index"></div>
+	<div id="index">
+		<table class="default-table all">
+			<thead>
+				<tr>
+					<th>Project</th><th>Task Title</th><th>Post Date</th><th>Due Date</th><th>Done</th>
+				</tr>
+			</thead>
+			<tbody id="home-tasks">
+
+			</tbody>
+		</table>
+	</div>
 
 	<div id="clients"></div>
 
@@ -107,10 +117,10 @@
 		<h2><span class="h2span">Job Status</span> <span id="job-status"></span> <span class="h2span">Type</span> <span id="job-type"></span></h2>
 		<div id="job-link">
 			<ul>
-				<li>Overview</li>
-				<li id="show-tasks-button">Tasks</li>
-				<li>Art</li>
-				<li>Invoices</li>
+				<li class="job-links" id="show-job-overview" data-target="job-overview">Overview</li>
+				<li class="job-links" id="show-tasks-button" data-target="job-tasks">Tasks</li>
+				<li class="job-links" id="show-job-art" data-target="job-art">Art</li>
+				<li class="job-links" id="show-job-invoice" data-target="job-invoices">Invoices</li>
 			</ul>
 			<ul>
 				<li>Edit Project</li>
@@ -135,7 +145,7 @@
 			</div>
 			<div id="description"><em>Description</em><p id="job-description"></p></div>
 		</div>
-		<div class="job-details-section" id="job-overview">
+		<div class="job-details-section active" id="job-overview">
 			<table class="default-table">
 				<thead>
 					<tr>
@@ -160,22 +170,6 @@
 				</thead>
 				<tbody id="expenses-body"></tbody>
 			</table>
-			<table class="default-table">
-				<thead>
-					<tr>
-						<th>id</th><th>Invoice Title</th><th>Date</th><th>Added By</th><th>Total Cost</th>
-					</tr>
-				</thead>
-				<tbody id="invoices-body"></tbody>
-			</table>
-			<table class="default-table">
-				<thead>
-					<tr>
-						<th>id</th><th>Art Title</th><th>Date</th><th>Added By</th>
-					</tr>
-				</thead>
-				<tbody id="art-body"></tbody>
-			</table>
 		</div>
 		<div class="job-details-section" id="job-tasks">
 			<table class="default-table">
@@ -185,6 +179,26 @@
 					</tr>
 				</thead>
 				<tbody id="tasks-body"></tbody>
+			</table>
+		</div>
+		<div class="job-details-section" id="job-invoices">
+			<table class="default-table">
+				<thead>
+					<tr>
+						<th>id</th><th>Invoice Title</th><th>Date</th><th>Added By</th><th>Total Cost</th>
+					</tr>
+				</thead>
+				<tbody id="invoices-body"></tbody>
+			</table>
+		</div>
+		<div class="job-details-section" id="job-art">
+			<table class="default-table">
+				<thead>
+					<tr>
+						<th>id</th><th>Art Title</th><th>Date Added</th><th>Added By</th>
+					</tr>
+				</thead>
+				<tbody id="art-body"></tbody>
 			</table>
 		</div>
 	</div>
@@ -387,7 +401,20 @@
 		<button class="submit-button" data-form="add-task-form" data-after="job/">Save</button>
 	</div>
 
-	<div id="show-task"></div>
+	<div id="show-task">
+		<ul id="task-links">
+			<li id="task-done">Done</li>
+			<li id="task-add-time">Add Time</li>
+		</ul>
+		<div id="task-details">
+			<h2>Title: <span id="task-title"></span></h2>
+			<p>Creator: <span id="task-creator"></span></p>
+			<p>Due Date: <span id="task-due"></span></p>
+			<p>Assigned to: <span id="task-assigned-to"></span></p>
+			<p>Summary:</p>
+			<div id="task-summary"></div>
+		</div>
+	</div>
 
 	<div id="show-tasks"></div>
 
@@ -429,7 +456,7 @@
 
 	<div id="add-time">
 		<input type="hidden" value="add-time" class="add-time-form" data-type="form">
-		<input type="text" class="add-time-form" data-type="job" placeholder="Job">
+		<input type="text" class="add-time-form" data-type="job" id="add-time-job-number" placeholder="Job">
 		<select class="add-time-form" data-type="hours">
 			<option vlaue="">Hours</option>
 			<option value="0">0</option>
@@ -493,11 +520,44 @@
 		<button class="submit-button" data-form="add-time-form" data-after="">Save</button>
 	</div>
 
-	<div id="team"></div>
+	<div id="team">
+		<table class="default-table">
+			<thead>
+				<tr>
+					<th>Name</th><th>Email</th><th>Office Phone</th><th>Cell Phone</th>
+				</tr>
+			</thead>
+			<tbody id="team-list">
 
-	<div id="tasks-team"></div>
+			</tbody>
+		</table>
+	</div>
 
-	<div id="tasks-unassigned"></div>
+	<div id="tasks-team">
+		<table class="default-table all">
+			<thead>
+				<tr>
+					<th>Project</th><th>Task</th><th>Date Created</th><th>Due Date</th>
+				</tr>
+			</thead>
+			<tbody id="team-task-list">
+
+			</tbody>
+		</table>
+	</div>
+
+	<div id="tasks-unassigned">
+		<table class="default-table all">
+			<thead>
+				<tr>
+					<th>Project</th><th>Task</th><th>Date Created</th><th>Due Date</th><th>Add Task</th>
+				</tr>
+			</thead>
+			<tbody id="unassigned-task-list">
+
+			</tbody>
+		</table>
+	</div>
 	
 	<div id="add-expense"></div>
 	<div id="add-estimate"></div>
@@ -533,7 +593,7 @@
 	window.auth = false;
 	function checkAuth(){
 		xhr('/api/auth.php?call=check-auth', function(res){
-			console.log(res);
+
 			if (res == true)
 				window.auth = true;
 			else{
@@ -542,6 +602,13 @@
 			}
 		});
 	}
+	addEventToAllOfClass(document.getElementsByClassName('job-links'), 'click', function(e){
+		var targets = document.getElementsByClassName('job-details-section');
+		for (var i=0; i<targets.length; i++){
+			targets[i].classList.remove('active');
+		}
+		document.getElementById(e.target.dataset.target).classList.add('active');
+	})
 	addEventToAllOfClass(document.getElementsByClassName('time-code-button'), 'click', function(e){
 		document.getElementById('add-time-form-time-code').value = e.target.dataset.code;
 	});
@@ -575,7 +642,16 @@
 	addEventToAllOfClass(document.getElementsByClassName('report-button'), 'click', selectReport);
 	document.getElementById('job_search').addEventListener('click', search);
 	document.getElementById('search_string').addEventListener('keypress', search);
-	document.getElementById('')
+	document.getElementById('task-add-time').addEventListener('click', function(e){
+		document.getElementById('add-time-job-number').value = e.target.dataset.jobNumber;
+		window.location.hash = "add-time";
+	});
+	document.getElementById('task-done').addEventListener('click', function(e){
+		var taskNumber = e.target.dataset.taskNumber;
+		xhr('/api/php-api.php?call=task-done&task_id='+taskNumber, function(res){
+			window.location.hash = "#task/"+taskNumber;
+		});
+	});
 
 	function search(e){
 		if((e.type == 'keypress' && e.keyCode == '13') || e.type=="click")
@@ -610,10 +686,37 @@
 				option.appendChild(document.createTextNode(res[i].first+' '+res[i].last));
 				select.appendChild(option);
 			}
-			console.log(res);
+
 		})
 		showRoute('add-task')};
-	routes['show-task'] = function(){showRoute('show-task')};
+	routes['task'] = function(){
+		xhr('/api/php-api.php?call=show-task&task_id='+window.location.hash.substring(1).split('/')[1], function(res){
+			emptyElement([
+				document.getElementById('task-title'),
+				document.getElementById('task-creator'),
+				document.getElementById('task-due'),
+				document.getElementById('task-assigned-to'),
+				document.getElementById('task-summary')
+			]);
+			document.getElementById('task-title').appendChild(document.createTextNode(res['task'][0].title));
+			document.getElementById('task-creator').appendChild(document.createTextNode(res['task'][0].first+" "+res['task'][0].last));
+			document.getElementById('task-due').appendChild(document.createTextNode(res['task'][0].due));
+			document.getElementById('task-summary').innerHTML = res['task'][0].summary;
+			document.getElementById('task-done').dataset.taskNumber =  res['task'][0].id;
+			document.getElementById('task-done').dataset.jobNumber =  res['task'][0].abbr+res['task'][0].number
+			document.getElementById('task-add-time').dataset.jobNumber =  res['task'][0].abbr+res['task'][0].number
+			var assigned = "";
+			for (var i=0; i<res['users'].length; i++){
+				if (i!=0)
+					assigned += ", ";
+				assigned += res['users'][i].first+" "+res['users'][i].last;
+			}
+			document.getElementById('task-assigned-to').appendChild(document.createTextNode(assigned));
+
+
+		});
+		showRoute('show-task')
+	};
 	routes['login-out'] = function(){
 		if (!window.auth){
 			showRoute('login');
@@ -628,9 +731,114 @@
 	};
 	routes['time'] = function(){showRoute('time');};
 	routes['add-time'] = function(){showRoute('add-time');};
-	routes['team'] = function(){showRoute('team');};
-	routes['tasks-team'] = function(){showRoute('tasks-team');};
-	routes['tasks-unassigned'] = function(){showRoute('tasks-unassigned');};
+	routes['team'] = function(){
+		xhr('/api/php-api.php?call=list-team', function(res){
+			var tr, tbody = document.getElementById('team-list'), td, span;
+			emptyElement(tbody);
+			for(var i=0; i<res.length; i++){
+				tr = document.createElement('tr');
+				td = document.createElement('td');
+				span = document.createElement('span');
+				td.appendChild(document.createTextNode(res[i].first+" "+res[i].last));
+				span.appendChild(document.createTextNode(res[i].title));
+				td.appendChild(span);
+				tr.appendChild(td);
+				td = document.createElement('td');
+				td.appendChild(document.createTextNode(res[i].username+"@ottcom.com"));
+				tr.appendChild(td);
+				td = document.createElement('td');
+				td.appendChild(document.createTextNode(res[i].office));
+				tr.appendChild(td);
+				td = document.createElement('td');
+				td.appendChild(document.createTextNode(res[i].cell));
+				tr.appendChild(td);
+				tbody.appendChild(tr);
+			}
+		});
+		showRoute('team');
+	};
+	routes['tasks-team'] = function(){
+		xhr('/api/php-api.php?call=team-tasks', function(res){
+			var list = [], team_task_list = document.getElementById('team-task-list'),
+				tr, td, a, task_list;
+			emptyElement(team_task_list);
+			for (var i=0; i<res.length; i++){
+				if (typeof list[res[i].first+' '+res[i].last] == 'undefined')
+					list[res[i].first+' '+res[i].last] = [];
+				list[res[i].first+' '+res[i].last].push(res[i]);
+			}
+			for (var user in list){
+				tr=document.createElement('tr');
+				td = document.createElement('td');
+				td.appendChild(document.createTextNode(user));
+				td.colSpan = "4";
+				td.classList.add("full-row");
+				tr.appendChild(td);
+				team_task_list.appendChild(tr);
+				task_list = list[user];
+				for(var i =0; i<task_list.length; i++){
+					tr=document.createElement('tr');
+					td = document.createElement('td');
+					td.appendChild(document.createTextNode(task_list[i].abbr+task_list[i].number+" - "+task_list[i].job_title));
+					tr.appendChild(td);
+					td = document.createElement('td');
+					a = document.createElement('a');
+					a.appendChild(document.createTextNode(task_list[i].title));
+					a.href="#task/"+task_list[i].task_id;
+					td.appendChild(a);
+					tr.appendChild(td);
+					td = document.createElement('td');
+					td.appendChild(document.createTextNode(task_list[i].created));
+					tr.appendChild(td);
+					td = document.createElement('td');
+					td.appendChild(document.createTextNode(task_list[i].due));
+					tr.appendChild(td);
+					team_task_list.appendChild(tr);
+				}
+			}
+		});
+		showRoute('tasks-team');
+	};
+	routes['tasks-unassigned'] = function(){
+		xhr('/api/php-api.php?call=unassigned-tasks', function(res){
+			var unassigned_task_list = document.getElementById('unassigned-task-list'),
+				tr, td, a, input, task_list = res;
+			emptyElement(unassigned_task_list);
+			for(var i =0; i<task_list.length; i++){
+				tr=document.createElement('tr');
+				td = document.createElement('td');
+				td.appendChild(document.createTextNode(task_list[i].abbr+task_list[i].number+" - "+task_list[i].job_title));
+				tr.appendChild(td);
+				td = document.createElement('td');
+				a = document.createElement('a');
+				a.appendChild(document.createTextNode(task_list[i].title));
+				a.href="#task/"+task_list[i].id;
+				td.appendChild(a);
+				tr.appendChild(td);
+				td = document.createElement('td');
+				td.appendChild(document.createTextNode(task_list[i].created));
+				tr.appendChild(td);
+				td = document.createElement('td');
+				td.appendChild(document.createTextNode(task_list[i].due));
+				tr.appendChild(td);
+				td = document.createElement('td');
+				input = document.createElement('input');
+				input.type="checkbox";
+				input.dataset.taskNumber = task_list[i].id;
+				input.classList.add("claim-task");
+				td.appendChild(input);
+				tr.appendChild(td);
+				unassigned_task_list.appendChild(tr);
+			}
+			addEventToAllOfClass(document.getElementsByClassName('claim-task'), 'click', function(e){
+				xhr('/api/php-api.php?call=claim-task&task_id='+e.target.dataset.taskNumber, function(res){
+					routes['tasks-unassigned']();
+				});
+			});
+		});
+
+		showRoute('tasks-unassigned');
+	};
 	routes['add-expense']=function(){showRoute('add-expense');};
 	routes['add-estimate']=function(){showRoute('add-estimate');};
 	routes['add-invoice']=function(){showRoute('add-invoice');};
@@ -638,7 +846,7 @@
 	/*routes['show-tasks']=function(){
 		var jobNumber = document.getElementById('show-tasks-button').dataset.jobNumber;
 		xhr('/api/php-api.php?call=show-tasks&job='+jobNumber, function(res){
-			console.log(res);
+
 		})
 		showRoute('show-tasks');
 	};*/
@@ -753,7 +961,7 @@
 		showRoute('credentials');
 		xhr('/api/php-api.php?call=credentials', function(response){
 			createJobInfoTable(response, document.getElementById('credentials-body'), ['id', 'site', 'username', 'password', 'notes']);
-			console.log(response);
+
 		});
 	}
 
@@ -786,15 +994,27 @@
 			document.getElementById('job-description').innerHTML = response[0].description;
 		});
 		xhr('/api/php-api.php?call=job-additional&number='+job_number, function(response){
-			//console.log(response.timecodes[response.times[0].code]*response.times[0].totaltime);
+			emptyElement([document.getElementById('client-and-number'),
+						  document.getElementById('times-body'),
+						  document.getElementById('estimate-body'),
+						  document.getElementById('expenses-body'),
+						  document.getElementById('invoices-body'),
+						  document.getElementById('art-body'),
+						  document.getElementById('tasks-body'),]);
+			//
 			createJobInfoTable(response.times, document.getElementById('times-body'), ['id', 'code', 'totaltime', response.timecodes]);
 			createJobInfoTable(response.estimates, document.getElementById('estimate-body'), ['id', 'title', 'date', 'added_by', 'amount', 'net']);
 			createJobInfoTable(response.expenses, document.getElementById('expenses-body'), ['id', 'title', 'date', 'added_by', 'cost', 'final_cost']);
 			createJobInfoTable(response.invoices, document.getElementById('invoices-body'), ['id', 'title', 'date', 'added_by', 'amount']);
 			createJobInfoTable(response.art, document.getElementById('art-body'), ['id', 'title', 'date', 'added_by']);
 			createJobInfoTable(response.tasks, document.getElementById('tasks-body'), ['id', 'task-title', 'names', 'created', 'due', 'status']);
-			console.log(response);
-		})
+
+		});
+		var targets = document.getElementsByClassName('job-details-section');
+		for (var i=0; i<targets.length; i++){
+			targets[i].classList.remove('active');
+		}
+		document.getElementById('job-overview').classList.add('active');
 	}
 
 	function createJobInfoTable(source, dest, cols){
@@ -804,10 +1024,12 @@
 			for(col in cols){
 				td = document.createElement('td');
 				if(typeof cols[col] != "object"){
+					if(source[i][cols[col]] == null)
+						continue;
 					if (cols[col] == 'title' && source[i]['file']){
 						a = document.createElement('a');
 						a.href = "/upload/"+source[i]['file'];
-						console.log(source[i].title == "");
+
 						if(source[i].title != "")
 							a.appendChild(document.createTextNode(source[i][cols[col]]));
 						else
@@ -837,7 +1059,7 @@
 			tr.appendChild(document.createElement('td'));
 			td = document.createElement('td');
 			tr.appendChild(td);
-			console.log(source[0]);
+
 			td.colSpan = cols.length -2;
 			td.appendChild(document.createTextNode("total:"));
 			td = document.createElement('td');
@@ -856,7 +1078,7 @@
 			try{
 				if (route.match(/^[A-Za-z]{3}?([0-9]{5,6})$/)[1]){
 					window.location.hash = '#job/'+route;
-					console.log(hash);
+
 				}
 			}catch(e){
 				index();
@@ -880,6 +1102,42 @@
 	}, 250);
 
 	function index(){
+		xhr('/api/php-api.php?call=home-task-list', function(res){
+			var task_list = document.getElementById('home-tasks'),
+				tr, td, a, input;
+			emptyElement(task_list);
+			for(var i =0; i<res.length; i++){
+				tr=document.createElement('tr');
+				td = document.createElement('td');
+				td.appendChild(document.createTextNode(res[i].abbr+res[i].number+" - "+res[i].job_title));
+				tr.appendChild(td);
+				td = document.createElement('td');
+				a = document.createElement('a');
+				a.appendChild(document.createTextNode(res[i].title));
+				a.href="#task/"+res[i].id;
+				td.appendChild(a);
+				tr.appendChild(td);
+				td = document.createElement('td');
+				td.appendChild(document.createTextNode(res[i].created));
+				tr.appendChild(td);
+				td = document.createElement('td');
+				td.appendChild(document.createTextNode(res[i].due));
+				tr.appendChild(td);
+				td = document.createElement('td');
+				input = document.createElement('input');
+				input.type="checkbox";
+				input.dataset.taskNumber = res[i].task_id;
+				input.classList.add("home-mark-done");
+				td.appendChild(input);
+				tr.appendChild(td);
+				task_list.appendChild(tr);
+			}
+			addEventToAllOfClass(document.getElementsByClassName('home-mark-done'), 'click', function(e){
+				xhr('/api/php-api.php?call=task-done&task_id='+e.target.dataset.taskNumber, function(res){
+					window.location.hash="task/"+e.target.dataset.taskNumber;
+				});
+			});
+		});
 		showRoute('index');
 		document.getElementById('loading').style.display = "none";
 	}
@@ -898,7 +1156,7 @@
 		var node = e.target;
 		while(node.nodeName != 'LI'){
 			node = node.parentNode;
-			console.log(node);
+
 		}
 		var job_number = node.dataset.job_number;
 		window.location.hash = "#job/"+job_number;
@@ -1125,7 +1383,7 @@
 					element[list].removeChild(element[list].lastChild);
 					child = false;
 				}catch(e){
-					console.log(e)
+
 					element[list].removeChild(element[list].lastChild);
 				}
 			}
