@@ -15,7 +15,7 @@ switch ($call){
 		echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
 		break;
 	case 'home-task-list':
-		$stmt = $db->prepare("SELECT *, jobs.title as job_title, clients.abbr, tasks.title FROM otter3.task_users left join tasks on task_users.task_id = tasks.id left join users on users.id=task_users.user_id left join jobs on tasks.job_id = jobs.id left join clients on clients.id = jobs.client_id where users.id=:uid and task_users.status != 1");
+		$stmt = $db->prepare("SELECT tasks.id as id, jobs.number, tasks.due, tasks.created, tasks.title, jobs.title as job_title, clients.abbr, tasks.title FROM otter3.task_users left join tasks on task_users.task_id = tasks.id left join users on users.id=task_users.user_id left join jobs on tasks.job_id = jobs.id left join clients on clients.id = jobs.client_id where users.id=:uid and task_users.status != 1");
 		$stmt->bindParam(':uid', $_SESSION['id'], PDO::PARAM_INT);
 		$stmt->execute();
 		echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
@@ -60,14 +60,15 @@ switch ($call){
 		if($_GET['search_string']!=''){
 			switch ($_GET['search_type']) {
 				case 'All':
-					$params = [];
-					preg_match('/([A-Za-z]{3})([0-9]{5,6})/', $_GET['search_string'], $matches);
-					if($matches[0]){
-						$params['abbr'] = $matches[1];
-						$params['number'] = $matches[2];
-					}
-					//
-					$stmt = $db->prepare("select jobs.*, abbr, users.first, users.last from jobs left join clients on jobs.client_id = clients.id left join users on users.id = jobs.creator where job_status like :status order by id DESC");
+//					$params = [];
+//					preg_match('/([0-9A-Za-z]{3})?([0-9]{5,6})?/', $_GET['search_string'], $matches);
+//						print_r($matches);
+//					//
+//					$stmt = $db->prepare("select jobs.*, abbr, users.first, users.last from jobs left join clients on jobs.client_id = clients.id left join users on users.id = jobs.creator where job_status like :status and number like :number and abbr like :abbr order by id DESC");
+//					$abbr = isset($matches[1]) ? $matches[1] : '%%';
+//					$number = isset($matches[2]) ? $matches[2] : '%%';
+//					$stmt->bindValue(':abbr', $abbr);
+//					$stmt->bindValue(':number', $number);
 					break;
 				case 'Job ':
 					preg_match('/^([0-9A-Za-z]{3})?([0-9]{5,6})$/', $_GET['search_string'], $matches);
@@ -75,7 +76,7 @@ switch ($call){
 					if(isset($matches[0])){
 						$stmt = $db->prepare("select jobs.*, abbr, users.first, users.last from jobs left join clients on jobs.client_id = clients.id left join users on users.id = jobs.creator where job_status like :status and (jobs.number=:number and abbr like :abbr) order by id DESC");
 						$stmt->bindParam(':number', $matches[2]);
-						$stmt->bindParam(':abbr', $matches[1]);
+						$stmt->bindValue(':abbr', '%'.$matches[1].'%');
 					}else if(isset($abbr[0])){
 						$stmt = $db->prepare("select jobs.*, abbr, users.first, users.last from jobs left join clients on jobs.client_id = clients.id left join users on users.id = jobs.creator where job_status like :status and (abbr=:abbr) order by id DESC");
 						$stmt->bindParam(':abbr', $abbr[0]);
@@ -114,7 +115,7 @@ switch ($call){
 		}
 		break;
 	case 'task-done':
-		$stmt = $db->prepare('update task_users set status=1 where task_id = :task_id and user_id=:user_id');
+		$stmt = $db->prepare('update task_users set status=if(status = 1, 0, 1) where task_id = :task_id and user_id=:user_id');
 		$stmt->bindParam(':task_id', $_GET['task_id'], PDO::PARAM_INT);
 		$stmt->bindParam(':user_id', $_SESSION['id'], PDO::PARAM_INT);
 		$stmt->execute();
@@ -142,7 +143,7 @@ switch ($call){
 			$art = $db->prepare("select art.*, concat(users.first, ' ', users.last) added_by from art left join jobs on art.job_id=jobs.id left join users on art.added_by = users.id where jobs.number = :number");
 			$art->bindValue(":number", $_GET['number']);
 			$art->execute();
-			$tasks = $db->prepare("SELECT tasks.id, tasks.title `task-title`, GROUP_CONCAT(concat(first, ' ', last)) as names, created, due, status FROM jobs left join tasks on jobs.id = tasks.job_id left join otter3.task_users on tasks.id = task_users.task_id left join users on users.id = user_id where jobs.number = :number group by task_id");
+			$tasks = $db->prepare("SELECT tasks.id, tasks.title `task-title`, GROUP_CONCAT(concat(first, ' ', last)) as names, created, due, if(sum(status) = count(task_id), 1, 0) as status FROM jobs left join tasks on jobs.id = tasks.job_id left join otter3.task_users on tasks.id = task_users.task_id left join users on users.id = user_id where jobs.number = :number group by task_id");
 			$tasks->bindValue(":number", $_GET['number']);
 			$tasks->execute();
 			echo json_encode(["estimates"=>$estimates->fetchAll(PDO::FETCH_OBJ), "times"=>$times->fetchAll(PDO::FETCH_OBJ), "timecodes" => $timecodes->fetchAll(PDO::FETCH_OBJ)[0], "expenses" => $expenses->fetchAll(PDO::FETCH_OBJ), "invoices" => $invoices->fetchAll(PDO::FETCH_OBJ), "art" => $art->fetchAll(PDO::FETCH_OBJ), "tasks" => $tasks->fetchAll(PDO::FETCH_OBJ)]);
@@ -213,16 +214,20 @@ switch ($call){
 				break;
 			case 'add-task':
 				preg_match('/^[0-9A-Za-z]{3}([0-9]{5,6})$/', $_POST['job'], $matches);
-				$task = $db->prepare("insert into tasks (title, summary, due, job_id, creator) values (:title, :summary, :due, (select id from jobs where number = :number), :creator)");
+				$task = $db->prepare("insert into tasks (id, title, summary, due, job_id, creator) values (:id, :title, :summary, :due, (select id from jobs where number = :number), :creator) on duplicate key update title=:title, summary=:summary, due=:due");
+				$task->bindParam(':id', $_POST['id'], PDO::PARAM_INT);
 				$task->bindParam(':title', $_POST['title']);
 				$task->bindParam(':summary', $_POST['description']);
 				$task->bindValue(':due', $_POST['date']." ".$_POST['due']);
 				$task->bindParam(':number', $matches[1], PDO::PARAM_INT);
 				$task->bindParam(':creator', $_SESSION['id'], PDO::PARAM_INT);
 				$task->execute();
-				$task_id = $db->lastInsertId();
+				$task_id = ($db->lastInsertId()) ? $db->lastInsertId() : $_POST['id'];
 				$users = explode(',', $_POST['users']);
-				$users_tasks = $db->prepare("insert into task_users (task_id, user_id) values (:task_id, :user_id)");
+				$remove_users = $db->prepare("delete from task_users where task_id = :task_id");
+				$remove_users->bindParam(":task_id", $task_id);
+				$remove_users->execute();
+				$users_tasks = $db->prepare("insert ignore into task_users (task_id, user_id) values (:task_id, :user_id)");
 				$users_tasks->bindParam(":task_id", $task_id);
 				for($i=0; $i<count($users); $i++){
 					$users_tasks->bindParam(":user_id", $users[$i]);

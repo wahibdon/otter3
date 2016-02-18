@@ -105,7 +105,7 @@
 		</div>
 		<div id="job-search">
 			<select id="search_type">
-				<option>All</option>
+<!--				<option>All</option>-->
 				<option selected>Job &num;</option>
 				<option>Title</option>
 			</select><input type="text" id="search_string"><button id="job_search">Search</button>
@@ -175,7 +175,7 @@
 			<table class="default-table">
 				<thead>
 					<tr>
-						<th>id</th><th>Task Title</th><th>Assigned To</th><th>Post Date</th><th>Due Date</th><th>Status</th><th>Done</th>
+						<th>id</th><th>Task Title</th><th>Assigned To</th><th>Post Date</th><th>Due Date</th><th>Done</th>
 					</tr>
 				</thead>
 				<tbody id="tasks-body"></tbody>
@@ -296,10 +296,11 @@
 
 	<div id="add-task">
 		<input type="hidden" value="add-task" class="add-task-form" data-type="form">
+		<input id="add-task-id" type="hidden" class="add-task-form" data-type="id">
 		<input type="text" id="add-task-job" class="add-task-form" data-type="job" placeholder="Job">
-		<input type="text" class="add-task-form" data-type="title" placeholder="Title">
-		<input type="text" class="add-task-form" data-type="date" id="at-date" placeholder="Date"><span class="calendar-button" data-target="at-date"> &#x1f4c5;</span>
-		<select class="add-task-form" data-type="due">
+		<input id="add-task-title" type="text" class="add-task-form" data-type="title" placeholder="Title">
+		<input id="add-task-date" type="text" class="add-task-form" data-type="date" placeholder="Date"><span class="calendar-button" data-target="add-task-date"> &#x1f4c5;</span>
+		<select id="add-task-time" class="add-task-form" data-type="due">
 			<option value="00:00:00">12:00am</option>
 			<option value="00:30:00">12:30am</option>
 			<option value="01:00:00">1:00am</option>
@@ -411,6 +412,8 @@
 		<ul id="task-links">
 			<li id="task-done">Done</li>
 			<li id="task-add-time">Add Time</li>
+			<li id="task-edit">Edit Task</li>
+			<li id="task-view-job">Go To Job</li>
 		</ul>
 		<div id="task-details">
 			<h2>Title: <span id="task-title"></span></h2>
@@ -638,6 +641,17 @@
 			'image-tooltip': true
 		}
 	});
+	xhr('/api/php-api.php?call=list-users', function(res){
+			var select = document.getElementById('add-task-user-list'), option;
+			emptyElement([select]);
+			for (var i=0; i<res.length; i++){
+				option = document.createElement('option');
+				option.value = res[i].id;
+				option.appendChild(document.createTextNode(res[i].first+' '+res[i].last));
+				select.appendChild(option);
+			}
+
+		});
 
 	addEventToAllOfClass(document.getElementsByClassName('calendar-button'), 'click', calPopup);
 	window.hash = window.location.hash.substring(1).split('/')[0];
@@ -664,10 +678,34 @@
 		document.getElementById('add-job-client-list').value = project_info.client_id;
 		document.getElementById('add-job-title').value = project_info.title;
 		document.getElementById('add-job-type-list').value = project_info.type;
-		document.getElementById('add-job-editor').innerHTML = project_info.description;
+		editors['add-job-editor'].setHTML( project_info.description);
 		document.getElementById('add-job-billing-list').value = project_info.billing_status;
 		document.getElementById('add-job-staus-list').value = project_info.job_status;
 		window.location.hash = 'add-job';
+	});
+	document.getElementById('task-edit').addEventListener('click', function(e){
+		var task_info = JSON.parse(e.target.dataset.task_info), user_list = document.getElementById('add-task-user-list');
+		console.log(task_info['task'][0].abbr+task_info['task'][0].number);
+		document.getElementById('add-task-id').value = task_info['task'][0].id;
+		document.getElementById('add-task-job').value = task_info['task'][0].abbr+task_info['task'][0].number;
+		document.getElementById('add-task-title').value = task_info['task'][0].title;
+		document.getElementById('add-task-date').value = task_info['task'][0].due.split(" ")[0];
+		document.getElementById('add-task-time').value = task_info['task'][0].due.split(" ")[1];
+		for(var i=0; i<task_info['users'].length; i++){
+			console.log(user_list.length);
+			for(var j=0; j<user_list.length; j++){
+				if (task_info['users'][i].id == user_list[j].value){
+					user_list[j].selected = true;
+					user_list[0].selected = false;
+				}
+			}
+
+		}
+		editors['add-task-editor'].setHTML(task_info['task'][0].summary);
+		window.location.hash = 'add-task';
+	});
+	document.getElementById('task-view-job').addEventListener('click', function(e){
+		window.location.hash = "job/"+e.target.dataset.job;
 	});
 
 	function search(e){
@@ -693,18 +731,8 @@
 	routes['add-vendor'] = function(){showRoute('add-vendor')};
 	routes['add-client-contact'] = function(){showRoute('add-client-contact')};
 	routes['add-task'] = function(){
-		document.getElementById('add-task-job').value = document.getElementById('create-task-button').dataset.jobNumber
-		xhr('/api/php-api.php?call=list-users', function(res){
-			var select = document.getElementById('add-task-user-list'), option;
-			emptyElement([select]);
-			for (var i=0; i<res.length; i++){
-				option = document.createElement('option');
-				option.value = res[i].id;
-				option.appendChild(document.createTextNode(res[i].first+' '+res[i].last));
-				select.appendChild(option);
-			}
-
-		})
+		if(typeof document.getElementById('create-task-button').dataset.jobNumber != 'undefined')
+			document.getElementById('add-task-job').value = document.getElementById('create-task-button').dataset.jobNumber
 		showRoute('add-task')};
 	routes['task'] = function(){
 		xhr('/api/php-api.php?call=show-task&task_id='+window.location.hash.substring(1).split('/')[1], function(res){
@@ -729,8 +757,8 @@
 				assigned += res['users'][i].first+" "+res['users'][i].last;
 			}
 			document.getElementById('task-assigned-to').appendChild(document.createTextNode(assigned));
-
-
+			document.getElementById('task-edit').dataset.task_info = JSON.stringify(res);
+			document.getElementById('task-view-job').dataset.job = res['task'][0].abbr+res['task'][0].number;
 		});
 		showRoute('show-task')
 	};
@@ -876,8 +904,9 @@
 					elements[i].value=0;
 					break;
 				case 'INPUT':
-					if (elements[i].type=="text" || elements[i].type == "password")
+					if (elements[i].type=="text" || elements[i].type == "password" || (elements[i].type=="hidden" && elements[i].dataset.type != 'form')){
 						elements[i].value = '';
+					}
 					break;
 				default:
 					break;
@@ -1005,6 +1034,7 @@
 			document.getElementById('project-edit').dataset.information = JSON.stringify(response[0]);
 		});
 		xhr('/api/php-api.php?call=job-additional&number='+job_number, function(response){
+		console.log(response.tasks);
 			emptyElement([document.getElementById('client-and-number'),
 						  document.getElementById('times-body'),
 						  document.getElementById('estimate-body'),
@@ -1029,7 +1059,7 @@
 	}
 
 	function createJobInfoTable(source, dest, cols){
-		var tr, td, a, totals=0;
+		var tr, td, a, totals=0, cb;
 		for(var i=0; i<source.length; i++){
 			tr=document.createElement('tr');
 			for(col in cols){
@@ -1051,6 +1081,18 @@
 						a.href = "#task/"+source[i]['id'];
 						a.appendChild(document.createTextNode(source[i][cols[col]]));
 						td.appendChild(a);
+					}else if(cols[col]=='status'){
+						cb = document.createElement('input');
+						cb.type = 'checkbox';
+						cb.checked = (source[i][cols[col]] ==1) ? 'checked': '';
+						cb.dataset.taskNumber = source[i]['id'];
+						cb.addEventListener('click', function(e){
+							xhr('/api/php-api.php?call=task-done&task_id='+e.target.dataset.taskNumber, function(res){
+								console.log(res);
+							});
+						})
+						td.appendChild(cb);
+
 					}else{
 						td.appendChild(document.createTextNode(source[i][cols[col]]));
 					}
@@ -1118,9 +1160,13 @@
 				tr, td, a, input;
 			emptyElement(task_list);
 			for(var i =0; i<res.length; i++){
+				console.log(res[i]);
 				tr=document.createElement('tr');
 				td = document.createElement('td');
-				td.appendChild(document.createTextNode(res[i].abbr+res[i].number+" - "+res[i].job_title));
+				a = document.createElement('a');
+				a.appendChild(document.createTextNode(res[i].abbr+res[i].number+" - "+res[i].job_title));
+				a.href="#job/"+res[i].abbr+res[i].number;
+				td.appendChild(a);
 				tr.appendChild(td);
 				td = document.createElement('td');
 				a = document.createElement('a');
@@ -1137,7 +1183,7 @@
 				td = document.createElement('td');
 				input = document.createElement('input');
 				input.type="checkbox";
-				input.dataset.taskNumber = res[i].task_id;
+				input.dataset.taskNumber = res[i].id;
 				input.classList.add("home-mark-done");
 				td.appendChild(input);
 				tr.appendChild(td);
