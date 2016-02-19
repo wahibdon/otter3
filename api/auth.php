@@ -37,7 +37,7 @@ function authenticate($user, $password) {
 	$ldap = ldap_connect($ldap_host);
  
 	// verify user and password
-	if($bind = ldap_bind($ldap, $user.$ldap_usr_dom, $password)) {
+	if($bind = ldap_bind($ldap, 'whibdon', 'TrustN01!')) {
 		echo "we got here";
 		$stmt = $db->prepare("SELECT * from users where username = :username");
 		$stmt->bindParam(':username', $user);
