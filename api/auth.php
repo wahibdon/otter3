@@ -27,7 +27,7 @@ function authenticate($user, $password) {
 	global $db;
 	if(empty($user) || empty($password)) return false;
 	// Active Directory server
-	$ldap_host = "ottsrv.ottcom.com";
+	$ldap_host = "192.168.22.26";
 	// Active Directory DN
 	$ldap_dn = "OU=Ott Staff,DC=ott,DC=local";
 	// Domain, for purposes of constructing $user
