@@ -35,7 +35,7 @@ function authenticate($user, $password) {
  
 	// connect to active directory
 	$ldap = ldap_connect($ldap_host);
-	print_r($ldap);
+	var_dump($ldap);
  
 	// verify user and password
 	if($bind = @ldap_bind($ldap, $user.$ldap_usr_dom, $password)) {
