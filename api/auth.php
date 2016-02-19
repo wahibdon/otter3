@@ -24,6 +24,7 @@ switch ($call) {
 }
  
 function authenticate($user, $password) {
+	echo $user." ".$password;
 	global $db;
 	if(empty($user) || empty($password)) return false;
 	// Active Directory server
