@@ -215,7 +215,7 @@ switch ($call){
 			case 'add-task':
 				preg_match('/^[0-9A-Za-z]{3}([0-9]{5,6})$/', $_POST['job'], $matches);
 				$task = $db->prepare("insert into tasks (id, title, summary, due, job_id, creator) values (:id, :title, :summary, :due, (select id from jobs where number = :number), :creator) on duplicate key update title=:title, summary=:summary, due=:due");
-				$task->bindParam(':id', $_POST['id'], PDO::PARAM_INT);
+				$task->bindParam(':id', $_POST['id']);
 				$task->bindParam(':title', $_POST['title']);
 				$task->bindParam(':summary', $_POST['description']);
 				$task->bindValue(':due', $_POST['date']." ".$_POST['due']);
@@ -224,14 +224,16 @@ switch ($call){
 				$task->execute();
 				$task_id = ($db->lastInsertId()) ? $db->lastInsertId() : $_POST['id'];
 				$users = explode(',', $_POST['users']);
-				$remove_users = $db->prepare("delete from task_users where task_id = :task_id");
-				$remove_users->bindParam(":task_id", $task_id);
-				$remove_users->execute();
-				$users_tasks = $db->prepare("insert ignore into task_users (task_id, user_id) values (:task_id, :user_id)");
-				$users_tasks->bindParam(":task_id", $task_id);
-				for($i=0; $i<count($users); $i++){
-					$users_tasks->bindParam(":user_id", $users[$i]);
-					$users_tasks->execute();
+				if($users[0] !=0 ){
+					$remove_users = $db->prepare("delete from task_users where task_id = :task_id");
+					$remove_users->bindParam(":task_id", $task_id);
+					$remove_users->execute();
+					$users_tasks = $db->prepare("insert ignore into task_users (task_id, user_id) values (:task_id, :user_id)");
+					$users_tasks->bindParam(":task_id", $task_id);
+					for($i=0; $i<count($users); $i++){
+						$users_tasks->bindParam(":user_id", $users[$i]);
+						$users_tasks->execute();
+					}
 				}
 				echo json_encode(true);
 				break;
