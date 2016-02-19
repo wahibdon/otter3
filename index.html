@@ -1035,8 +1035,7 @@
 		});
 		xhr('/api/php-api.php?call=job-additional&number='+job_number, function(response){
 		console.log(response.tasks);
-			emptyElement([document.getElementById('client-and-number'),
-						  document.getElementById('times-body'),
+			emptyElement([document.getElementById('times-body'),
 						  document.getElementById('estimate-body'),
 						  document.getElementById('expenses-body'),
 						  document.getElementById('invoices-body'),
@@ -1065,8 +1064,10 @@
 			for(col in cols){
 				td = document.createElement('td');
 				if(typeof cols[col] != "object"){
-					if(source[i][cols[col]] == null)
+					if(source[i][cols[col]] == null){
+						tr.appendChild(td);
 						continue;
+					}
 					if (cols[col] == 'title' && source[i]['file']){
 						a = document.createElement('a');
 						a.href = "/upload/"+source[i]['file'];
