@@ -24,7 +24,6 @@ switch ($call) {
 }
  
 function authenticate($user, $password) {
-	echo $user." ".$password;
 	global $db;
 	if(empty($user) || empty($password)) return false;
 	// Active Directory server
@@ -39,6 +38,7 @@ function authenticate($user, $password) {
  
 	// verify user and password
 	if($bind = @ldap_bind($ldap, $user.$ldap_usr_dom, $password)) {
+		echo "we got here";
 		$stmt = $db->prepare("SELECT * from users where username = :username");
 		$stmt->bindParam(':username', $user);
 		$stmt->execute();
