@@ -1213,7 +1213,7 @@
 		});
 	}
 	function run_report_tfp(){
-		xhr('/api/php-api.php?call=run-report&type=tfp&job='+document.getElementById('tfp-job'), function(res){
+		xhr('/api/php-api.php?call=run-report&type=tfp&job='+document.getElementById('tfp-job').value, function(res){
 			var reports_result = document.getElementById('report-results'), table, title='', thead, tr, td, th, tbody;
 			emptyElement([reports_result]);
 			for (var i=0; i<res.length; i++){
