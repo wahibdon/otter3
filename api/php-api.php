@@ -163,8 +163,7 @@ switch ($call){
 		switch ($_POST['form']){
 			case 'add-job':
 				$current_year = date('y');
-				$current_year = date('y');
-				$latest_job_num = $db->prepare('SELECT max(number) from jobs');
+				$latest_job_num = $db->prepare("SELECT max(number) from jobs where substring(number, 1, 2) = date_format(now(), '%y');");
 				$latest_job_num->execute();
 				$latest_job_num = $latest_job_num->fetchColumn();
 				$latest_job_num_year = substr($latest_job_num, 0, 2);
@@ -177,7 +176,7 @@ switch ($call){
 				$latest_job_num = str_pad($latest_job_num, 3, "0", STR_PAD_LEFT);
 				$job_num = $latest_job_num_year.$latest_job_num;
 				$stmt = $db->prepare("insert into jobs (id, client_id, number, title, description, opened, type, creator, billing_status, job_status) values (:id, :client_id, :number, :title, :description, :opened, :type, :creator, :billing_status, :job_status) on duplicate key update client_id = :client_id, number=:number, title=:title, description=:description, billing_status=:billing_status, job_status=:job_status");
-				$stmt->bindParam(':id', $_POST['client'], PDO::PARAM_INT);
+				$stmt->bindParam(':id', $_POST['id'], PDO::PARAM_INT);
 				$stmt->bindParam(':client_id', $_POST['client'], PDO::PARAM_INT);
 				$stmt->bindParam(':number', $job_num, PDO::PARAM_INT);
 				$stmt->bindParam(':title',$_POST['title']);
@@ -214,7 +213,7 @@ switch ($call){
 				break;
 			case 'add-task':
 				preg_match('/^[0-9A-Za-z]{3}([0-9]{5,6})$/', $_POST['job'], $matches);
-				$task = $db->prepare("insert into tasks (id, title, summary, due, job_id, creator) values (:id, :title, :summary, :due, (select id from jobs where number = :number), :creator) on duplicate key update title=:title, summary=:summary, due=:due");
+				$task = $db->prepare("insert into tasks (id, title, summary, due, job_id, creator) values (:id, :title, :summary, str_to_date(:due, '%M %d, %Y %k:%i:%s'), (select id from jobs where number = :number), :creator) on duplicate key update title=:title, summary=:summary, due=str_to_date(:due, '%M %d, %Y %k:%i:%s')");
 				$task->bindParam(':id', $_POST['id']);
 				$task->bindParam(':title', $_POST['title']);
 				$task->bindParam(':summary', $_POST['description']);
@@ -256,8 +255,30 @@ switch ($call){
 		$stmt->execute();
 		echo json_encode(true);
 		break;
+	case "report-list-jobs":
+		$stmt=$db->prepare("select jobs.id, number, abbr, title from jobs left join clients on client_id=jobs.client_id order by abbr ASC, jobs.id DESC");
+		$stmt->execute();
+		echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
+		break;
+	case "run-report":
+		switch($_GET['type']){
+			case "atr":
+				$stmt=$db->prepare("select code, sum(totaltime) time, job_id, abbr, number, jobs.title from time_card left join times on time_card.id=times.timecard_id left join jobs on jobs.id = job_id left join clients on clients.id=client_id where date <= str_to_date(:date_end, '%M %d, %Y') and date >= str_to_date(:date_start, '%M %d, %Y') group by job_id, code order by abbr, title");
+				$stmt->bindParam(":date_start", $_GET['date_start']);
+				$stmt->bindParam(":date_end", $_GET['date_end']);
+				$stmt->execute();
+				echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
+				break;
+			case "tfp":
+
+				break;
+			default:
+				echo json_encode(false);
+				break;
+		}
+		break;
 	default:
-		echo json_encode("false");
+		echo json_encode(false);
 		break;
 }
 function listTable($table){

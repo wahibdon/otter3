@@ -492,3 +492,12 @@ table.default-table.all td.full-row{
 #tasks-unassigned table.default-table {
 	font-size: 14px;
 }
+#report-results {
+	float: right;
+	margin-top: 20px;
+	width: 79%;
+}
+#report-results .first-head th{
+	background: #000;
+	color: #c00;
+}

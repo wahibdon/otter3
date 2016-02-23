@@ -170,6 +170,14 @@
 				</thead>
 				<tbody id="expenses-body"></tbody>
 			</table>
+			<table class="default-table">
+				<thead>
+					<tr>
+						<th>id</th><th>Invoice Title</th><th>Date</th><th>Added By</th><th>Total Cost</th>
+					</tr>
+				</thead>
+				<tbody id="invoices-body"></tbody>
+			</table>
 		</div>
 		<div class="job-details-section" id="job-tasks">
 			<table class="default-table">
@@ -182,14 +190,7 @@
 			</table>
 		</div>
 		<div class="job-details-section" id="job-invoices">
-			<table class="default-table">
-				<thead>
-					<tr>
-						<th>id</th><th>Invoice Title</th><th>Date</th><th>Added By</th><th>Total Cost</th>
-					</tr>
-				</thead>
-				<tbody id="invoices-body"></tbody>
-			</table>
+
 		</div>
 		<div class="job-details-section" id="job-art">
 			<table class="default-table">
@@ -434,31 +435,51 @@
 			<li class="report-button" data-id="timesForProject">Times for Project</li>
 			<li class="report-button" data-id="jobsSinceLastReport">Jobs Since Last Report</li>
 			<li class="report-button" data-id="employeeTimesheet">Employee Times</li>
-			<li class="report-button" data-id="openJobs-Tasks">Open Jobs &amp; Tasks</li>
-			<li class="report-button" data-id="time-CostForClient">Time &amp; Cost for Client</li>
+			<li class="report-button" id="openJobs-TasksLi" data-id="openJobs-Tasks">Open Jobs &amp; Tasks</li>
+			<li class="report-button" data-id="timeCostForClient">Time &amp; Cost for Client</li>
 		</ul>
 
 		<div class="report-area" id="adminTimeSheet">
 			<h2>Admin Timesheets</h2>
-			<input type="text" id="ats_start"><span class="calendar-button" data-target="ats_start"> &#x1f4c5;</span>
-			<input type="text" id="ats_end"><span class="calendar-button" data-target="ats_end"> &#x1f4c5;</span>
-			<button>Run Report</button>
+			<input type="text" id="ats_start" placeholder="Start Date"><span class="calendar-button" data-target="ats_start"> &#x1f4c5;</span>
+			<input type="text" id="ats_end" placeholder="End Date"><span class="calendar-button" data-target="ats_end"> &#x1f4c5;</span>
+			<button id="report-run-atr">Run Report</button>
 		</div>
 
 		<div class="report-area" id="timesForProject">
 			<h2>Times for Project</h2>
-			<select id="project_list"></select>
+			<input type="text" id="tfp-job" placeholder="Job Number">
+			<button id="report-run-tfp">Run Report</button>
 		</div>
 
-		<div class="report-area" id="jobsSinceLastReport"><h2>Jobs Since Last Report</h2></div>
+		<div class="report-area" id="jobsSinceLastReport">
+			<h2>Jobs Since Last Report</h2>
+			<input type="text" id="jslr-input" placeholder="Job Number">
+			<button id="report-run-jslr">Run Report</button>
+		</div>
 
-		<div class="report-area" id="employeeTimesheet"><h2>Employee Times</h2></div>
+		<div class="report-area" id="employeeTimesheet">
+			<h2>Employee Times</h2>
+			<input type="text" id="ets_start" placeholder="Start Date"><span class="calendar-button" data-target="ets_start"> &#x1f4c5;</span>
+			<input type="text" id="ets_end" placeholder="End Date"><span class="calendar-button" data-target="ets_end"> &#x1f4c5;</span>
+			<button id="report-run-ets">Run Report</button>
+		</div>
 
-		<div class="report-area" id="openJobs-Tasks"><h2>Open Jobs &amp; Tasks</h2></div>
+		<div class="report-area" id="openJobs-Tasks">
+			<h2>Open Jobs &amp; Tasks</h2>
+		</div>
 
-		<div class="report-area" id="time-CostForClient"><h2>Time &amp; Cost for Client</h2></div>
+		<div class="report-area" id="timeCostForClient">
+			<h2>Time &amp; Cost for Client</h2>
+			<select id="tcfc-client-list">
+				<option value="" class="no-hide">Select Client</option>
+			</select>
+			<input type="text" id="tcfc_start" placeholder="Start Date"><span class="calendar-button" data-target="tcfc_start"> &#x1f4c5;</span>
+			<input type="text" id="tcfc_end" placeholder="End Date"><span class="calendar-button" data-target="tcfc_end"> &#x1f4c5;</span>
+			<button id="report-run-tcfc">Run Report</button>
+		</div>
 
-
+		<div id="report-results"></div>
 	</div>
 
 	<div id="time"></div>
@@ -621,6 +642,116 @@
 	addEventToAllOfClass(document.getElementsByClassName('time-code-button'), 'click', function(e){
 		document.getElementById('add-time-form-time-code').value = e.target.dataset.code;
 	});
+	document.getElementById('report-run-atr').addEventListener('click', run_report_atr);
+	document.getElementById('openJobs-TasksLi').addEventListener('click', function(){
+		var report_results = document.getElementById('report-results');
+		emptyElement(report_results);
+		xhr('/api/php-api.php?call=team-tasks', function(res){
+			var list = [], tr=document.createElement('tr'), td, a, task_list, table = document.createElement('table'),
+				thead=document.createElement('thead'), th, tbody=document.createElement('tbody');
+			report_results.appendChild(table);
+			table.classList.add('default-table');
+			table.classList.add('all');
+			table.appendChild(thead);
+			table.appendChild(tbody);
+			thead.appendChild(tr);
+			th=document.createElement('th');
+			th.appendChild(document.createTextNode('Job'));
+			tr.appendChild(th);
+			th=document.createElement('th');
+			th.appendChild(document.createTextNode('Task'));
+			tr.appendChild(th);
+			th=document.createElement('th');
+			th.appendChild(document.createTextNode('Date Created'));
+			tr.appendChild(th);
+			th=document.createElement('th');
+			th.appendChild(document.createTextNode('Due Date'));
+			tr.appendChild(th);
+			thead.appendChild(tr);
+			for (var i=0; i<res.length; i++){
+				if (typeof list[res[i].first+' '+res[i].last] == 'undefined')
+					list[res[i].first+' '+res[i].last] = [];
+				list[res[i].first+' '+res[i].last].push(res[i]);
+			}
+			for (var user in list){
+				tr=document.createElement('tr');
+				td = document.createElement('td');
+				td.appendChild(document.createTextNode(user));
+				td.colSpan = "4";
+				td.classList.add("full-row");
+				tr.appendChild(td);
+				tbody.appendChild(tr);
+				task_list = list[user];
+				for(var i =0; i<task_list.length; i++){
+					tr=document.createElement('tr');
+					td = document.createElement('td');
+					td.appendChild(document.createTextNode(task_list[i].abbr+task_list[i].number+" - "+task_list[i].job_title));
+					tr.appendChild(td);
+					td = document.createElement('td');
+					a = document.createElement('a');
+					a.appendChild(document.createTextNode(task_list[i].title));
+					a.href="#task/"+task_list[i].task_id;
+					td.appendChild(a);
+					tr.appendChild(td);
+					td = document.createElement('td');
+					td.appendChild(document.createTextNode(task_list[i].created));
+					tr.appendChild(td);
+					td = document.createElement('td');
+					td.appendChild(document.createTextNode(task_list[i].due));
+					tr.appendChild(td);
+					tbody.appendChild(tr);
+				}
+			}
+			xhr('/api/php-api.php?call=unassigned-tasks', function(res){
+				var tr=document.createElement('tr'), td, a, task_list, table = document.createElement('table'),
+					thead=document.createElement('thead'), th, tbody=document.createElement('tbody'), h2=document.createElement('h2');
+				h2.appendChild(document.createTextNode('Unassigned'));
+				report_results.appendChild(h2);
+				report_results.appendChild(table);
+				table.classList.add('default-table');
+				table.classList.add('all');
+				table.appendChild(thead);
+				table.appendChild(tbody);
+				thead.appendChild(tr);
+				th=document.createElement('th');
+				th.appendChild(document.createTextNode('Job'));
+				tr.appendChild(th);
+				th=document.createElement('th');
+				th.appendChild(document.createTextNode('Task'));
+				tr.appendChild(th);
+				th=document.createElement('th');
+				th.appendChild(document.createTextNode('Date Created'));
+				tr.appendChild(th);
+				th=document.createElement('th');
+				th.appendChild(document.createTextNode('Due Date'));
+				tr.appendChild(th);
+				thead.appendChild(tr);
+				for(var i =0; i<res.length; i++){
+					tr=document.createElement('tr');
+					td = document.createElement('td');
+					td.appendChild(document.createTextNode(res[i].abbr+res[i].number+" - "+res[i].job_title));
+					tr.appendChild(td);
+					td = document.createElement('td');
+					a = document.createElement('a');
+					a.appendChild(document.createTextNode(res[i].title));
+					a.href="#task/"+res[i].id;
+					td.appendChild(a);
+					tr.appendChild(td);
+					td = document.createElement('td');
+					td.appendChild(document.createTextNode(res[i].created));
+					tr.appendChild(td);
+					td = document.createElement('td');
+					td.appendChild(document.createTextNode(res[i].due));
+					tr.appendChild(td);
+					tbody.appendChild(tr);
+				}
+			});
+		});
+	});
+	/*document.getElementById('').addEventListener('click', );
+	document.getElementById('').addEventListener('click', );
+	document.getElementById('').addEventListener('click', );
+	document.getElementById('').addEventListener('click', );*/
 	var submitButtons = document.getElementsByClassName('submit-button');
 	for(var i=0;i<submitButtons.length;i++){
 		submitButtons[i].addEventListener('click', submitForm);
@@ -989,11 +1120,67 @@
 	function showReports(){
 		showRoute('reports');
 		document.getElementById('loading').style.display = "none";
+		var tcfc = document.getElementById("tcfc-client-list");
+		emptyElement(tcfc);
+		xhr('/api/php-api.php?call=list-clients', function(res){
+			var option;
+			for (var i=0; i<res.length; i++){
+				option = document.createElement('option');
+				option.value = res[i].id;
+				option.appendChild(document.createTextNode(res[i].name));
+				tcfc.appendChild(option);
+			}
+			console.log(res);
+		});
 	}
 
 	function selectReport(e){
 		hideAllOfClass(document.getElementsByClassName('report-area'));
 		document.getElementById(e.target.dataset.id).style.display = "block";
+		emptyElement([document.getElementById('report-results')]);
+	}
+	function run_report_atr(){
+		xhr('/api/php-api.php?call=run-report&type=atr&date_start='+document.getElementById('ats_start').value+"&date_end="+document.getElementById('ats_end').value, function(res){
+			var reports_result = document.getElementById('report-results'), table, title='', thead, tr, td, th, tbody;
+			emptyElement([reports_result]);
+			for (var i=0; i<res.length; i++){
+				if(title != res[i].title){
+					title = res[i].title;
+					table=document.createElement('table');
+					table.classList.add('default-table');
+					table.classList.add('all');
+					thead=document.createElement('thead');
+					tr=document.createElement('tr');
+					tr.classList.add('first-head');
+					th=document.createElement('th');
+					th.colSpan = 2;
+					th.appendChild(document.createTextNode(res[i].abbr+res[i].number+" - "+res[i].title));
+					tr.appendChild(th);
+					thead.appendChild(tr);
+					tr=document.createElement('tr');
+					th=document.createElement('th');
+					th.appendChild(document.createTextNode("Time Code"));
+					tr.appendChild(th);
+					th=document.createElement('th');
+					th.appendChild(document.createTextNode("Total Time"));
+					tr.appendChild(th);
+					thead.appendChild(tr);
+					table.appendChild(thead);
+					tbody = document.createElement('tbody');
+					table.appendChild(tbody);
+					reports_result.appendChild(table);
+				}
+				tr=document.createElement('tr');
+				td=document.createElement('td');
+				td.appendChild(document.createTextNode(res[i].code));
+				tr.appendChild(td);
+				td=document.createElement('td');
+				td.appendChild(document.createTextNode(res[i].time));
+				tr.appendChild(td);
+				tbody.appendChild(tr);
+			}
+			console.log(res);
+		});
 	}
 
 	function showCredentials(){

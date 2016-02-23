@@ -8,6 +8,20 @@ if(document.getElementById('cal-prev-month')){
 		buildCalendar(buildMonthArray(new Date(root.dataset.year, parseInt(root.dataset.month)+1, 1)));
 	});
 }
+var months = [
+	"Jan",
+	"Feb",
+	"Mar",
+	"Apr",
+	"May",
+	"Jun",
+	"Jul",
+	"Aug",
+	"Sep",
+	"Oct",
+	"Nov",
+	"Dec"
+];
 function buildMonthArray(dateObject){
 	var	year = dateObject.getFullYear();
 	var month = dateObject.getMonth();
@@ -42,7 +56,7 @@ function buildCalendar(monthOject){
 	year.appendChild(document.createTextNode(monthOject.year));
 	var month = document.getElementById('cal-month');
 	emptyElement(month);
-	month.appendChild(document.createTextNode(monthOject.month+1));
+	month.appendChild(document.createTextNode(months[monthOject.month]));
 	var month = monthOject.month;
 	root.dataset.month = monthOject.month;
 	root.dataset.year = monthOject.year;
@@ -56,7 +70,7 @@ function buildCalendar(monthOject){
 				td.appendChild(document.createTextNode(cal[i][j]));
 				td.date = {year: monthOject.year, month: monthOject.month, day: cal[i][j]}
 				td.addEventListener('click', function(e){
-					var dateString = e.target.date.year+"-"+(e.target.date.month+1)+"-"+e.target.date.day;
+					var dateString = months[e.target.date.month]+" "+e.target.date.day+", "+e.target.date.year;
 					window.cal_target.value = dateString;
 					calPopup();
 				})
