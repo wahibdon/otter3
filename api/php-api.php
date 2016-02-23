@@ -236,6 +236,19 @@ switch ($call){
 				}
 				echo json_encode(true);
 				break;
+			case 'add-client':
+				$client = $db->prepare("insert into clients (name, abbr, address, `address2`, city, state, zip, url) values (:name, :abbr, :address, :address2, :city, :state, :zip, :url) on duplicate key update name=:name, abbr=:abbr, address=:address `address2`=:address2, city=:city, state=:state, zip=:zip, url=:url");
+				$client->bindParam(":name", $_POST['name']);
+				$client->bindParam(":abbr", $_POST['abbr']);
+				$client->bindParam(":address", $_POST['address']);
+				$client->bindParam(":address2", $_POST['address2']);
+				$client->bindParam(":city", $_POST['city']);
+				$client->bindParam(":state", $_POST['state']);
+				$client->bindParam(":zip", $_POST['zip']);
+				$client->bindParam(":url", $_POST['site']);
+				$client->execute();
+				echo json_encode(true);
+				break;
 		}
 		break;
 	case "team-tasks":

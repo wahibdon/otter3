@@ -132,7 +132,7 @@ ul#navigation > li > ul > li:hover {
 }
 #clients > ul, #vendors > ul {
 	margin-right: 5px;
-	height: 85vh;
+	height: calc(100vh - 200px);
 	overflow-y: auto;
 	width: 370px;
 	float: left;
@@ -503,4 +503,16 @@ table.default-table.all td.full-row{
 #report-results .first-head th{
 	background: #000;
 	color: #c00;
+}
+
+.addClientVendor {
+	position: absolute;
+    top: calc(100vh - 190px);
+}
+
+.add-client-form {
+	display: block;
+	margin: 5px;
+	width: 155px;
+	box-sizing: border-box;
 }
