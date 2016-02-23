@@ -277,6 +277,12 @@ switch ($call){
 				break;
 		}
 		break;
+	case "time-card":
+		$stmt=$db->prepare("SELECT clients.abbr, jobs.number, jobs.title, times.summary, times.code, times.totaltime from time_card left join times on time_card.id = times.timecard_id left join jobs on jobs.id=times.job_id left join clients on clients.id = jobs.client_id where date = current_date() and user_id=:uid");
+		$stmt->bindParam(":uid", $_SESSION['id']);
+		$stmt->execute();
+		echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
+		break;
 	default:
 		echo json_encode(false);
 		break;

@@ -482,7 +482,16 @@
 		<div id="report-results"></div>
 	</div>
 
-	<div id="time"></div>
+	<div id="time">
+		<table class="default-table">
+			<thead>
+				<tr>
+					<th>id</th><th>Job</th><th>Summary</th><th>Time Code</th><th>Total Time</th>
+				</tr>
+			</thead>
+			<tbody id="time-card-body"></tbody>
+		</table>
+	</div>
 
 	<div id="add-time">
 		<input type="hidden" value="add-time" class="add-time-form" data-type="form">
@@ -905,7 +914,27 @@
 			})
 		}
 	};
-	routes['time'] = function(){showRoute('time');};
+	routes['time'] = function(){
+		xhr('/api/php-api.php?call=time-card', function(res){
+			var timecardbody = document.getElementById('time-card-body'), tr, td;
+			for(var i=0; i<res.length; i++){
+				tr=document.createElement('tr');
+				td = document.createElement('td');
+				td.appendChild(document.createTextNode(res[i].abbr+res[i].number+" - "+res[i].title));
+				tr.appendChild(td);
+				td = document.createElement('td');
+				td.appendChild(document.createTextNode(res[i].summary));
+				tr.appendChild(td);
+				td = document.createElement('td');
+				td.appendChild(document.createTextNode(res[i].code));
+				tr.appendChild(td);
+				td = document.createElement('td');
+				td.appendChild(document.createTextNode(res[i].totaltime));
+				tr.appendChild(td);
+			}
+		})
+		showRoute('time');
+	};
 	routes['add-time'] = function(){showRoute('add-time');};
 	routes['team'] = function(){
 		xhr('/api/php-api.php?call=list-team', function(res){
