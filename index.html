@@ -1139,7 +1139,9 @@
 	}
 	function selectFromConst(src, target){
 		var option;
-		for(var i=1; i<src.length; i++){
+		for(var i=0; i<src.length; i++){
+			if (src[i] == null)
+				continue;
 			option = document.createElement('option');
 			option.appendChild(document.createTextNode(src[i]));
 			option.value = i;
