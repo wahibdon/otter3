@@ -270,7 +270,13 @@ switch ($call){
 				echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
 				break;
 			case "tfp":
-
+				$number = $_GET['job'];
+				preg_match('/^([0-9A-Za-z]{3})?([0-9]{5,6})$/', $number, $matches);
+				$number=$matches[2];
+				$stmt=$db->prepare("select code,sum(totaltime) totaltime, sum(cost) cost from times left join jobs on jobs.id=job_id where jobs.number = :number group by code");
+				$stmt->bindParam(":number", $number);
+				$stmt->execute();
+				echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
 				break;
 			default:
 				echo json_encode(false);

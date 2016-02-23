@@ -757,8 +757,8 @@
 			});
 		});
 	});
+	document.getElementById('report-run-tfp').addEventListener('click', run_report_atr);
 	/*document.getElementById('').addEventListener('click', );
-	document.getElementById('').addEventListener('click', );
 	document.getElementById('').addEventListener('click', );
 	document.getElementById('').addEventListener('click', );*/
 	var submitButtons = document.getElementsByClassName('submit-button');
@@ -1206,6 +1206,50 @@
 				tr.appendChild(td);
 				td=document.createElement('td');
 				td.appendChild(document.createTextNode(res[i].time));
+				tr.appendChild(td);
+				tbody.appendChild(tr);
+			}
+			console.log(res);
+		});
+	}
+	function run_report_tfp(){
+		xhr('/api/php-api.php?call=run-report&type=tfp&job='+document.getElementById('tfp-job'), function(res){
+			var reports_result = document.getElementById('report-results'), table, title='', thead, tr, td, th, tbody;
+			emptyElement([reports_result]);
+			for (var i=0; i<res.length; i++){
+				if(title != res[i].title){
+					title = res[i].title;
+					table=document.createElement('table');
+					table.classList.add('default-table');
+					table.classList.add('all');
+					thead=document.createElement('thead');
+					tr=document.createElement('tr');
+					th=document.createElement('th');
+					th.appendChild(document.createTextNode("Code"));
+					tr.appendChild(th);
+					th=document.createElement('th');
+					th.appendChild(document.createTextNode("Total Time"));
+					tr.appendChild(th);
+					thead.appendChild(tr);
+					th=document.createElement('th');
+					th.appendChild(document.createTextNode("Total Cost"));
+					tr.appendChild(th);
+					thead.appendChild(tr);
+					table.appendChild(thead);
+					tbody = document.createElement('tbody');
+					table.appendChild(tbody);
+					reports_result.appendChild(table);
+				}
+				tr=document.createElement('tr');
+				td=document.createElement('td');
+				td.appendChild(document.createTextNode(res[i].code));
+				tr.appendChild(td);
+				td=document.createElement('td');
+				td.appendChild(document.createTextNode(res[i].totaltime));
+				tr.appendChild(td);
+				tr.appendChild(td);
+				td=document.createElement('td');
+				td.appendChild(document.createTextNode(res[i].cost));
 				tr.appendChild(td);
 				tbody.appendChild(tr);
 			}
