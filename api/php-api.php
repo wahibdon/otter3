@@ -244,7 +244,7 @@ switch ($call){
 		echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
 		break;
 	case "unassigned-tasks":
-		$stmt = $db->prepare("SELECT tasks.*, jobs.number, jobs.title as job_title, clients.abbr, task_users.task_id FROM tasks left join jobs on jobs.id = tasks.job_id left join clients on clients.id=jobs.client_id left join task_users on task_users.task_id = tasks.id where task_users.task_id is NULL order by tasks.id DESC limit 1, 500");
+		$stmt = $db->prepare("SELECT tasks.*, jobs.number, jobs.title as job_title, clients.abbr, task_users.task_id FROM tasks left join jobs on jobs.id = tasks.job_id left join clients on clients.id=jobs.client_id left join task_users on task_users.task_id = tasks.id where task_users.task_id is NULL order by tasks.id DESC");
 		$stmt->execute();
 		echo json_encode($stmt->fetchAll(PDO::FETCH_OBJ));
 		break;
