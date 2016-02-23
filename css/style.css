@@ -49,6 +49,9 @@ ol, ul {
 	list-style: none;
 }
 /*End Reset*/
+* {
+	font-size: 12pt;
+}
 body {
 	margin: 0 0 50px;
 	background-color: #ddd;
