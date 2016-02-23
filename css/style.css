@@ -96,6 +96,7 @@ ul#navigation > li:hover {
 ul#navigation > li > a {
 	color: #fff;
 	text-decoration: none;
+	font-size: 22px;
 }
 ul#navigation > li > ul {
 	height: 0px;
