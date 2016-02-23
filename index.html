@@ -483,10 +483,10 @@
 	</div>
 
 	<div id="time">
-		<table class="default-table">
+		<table class="default-table all">
 			<thead>
 				<tr>
-					<th>id</th><th>Job</th><th>Summary</th><th>Time Code</th><th>Total Time</th>
+					<th>Job</th><th>Summary</th><th>Time Code</th><th>Total Time</th>
 				</tr>
 			</thead>
 			<tbody id="time-card-body"></tbody>
@@ -932,6 +932,7 @@
 				td.appendChild(document.createTextNode(res[i].totaltime));
 				tr.appendChild(td);
 			}
+			timecardbody.appendChild(tr);
 		})
 		showRoute('time');
 	};
