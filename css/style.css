@@ -70,7 +70,10 @@ body {
 	width: 960px;
 	margin: 50px auto 0;
 }
-#otter > div {display: none;}
+#otter > div {
+	display: none;
+	overflow: visible;
+}
 ul {
 	margin: 0;
 	padding: 0;
@@ -132,7 +135,7 @@ ul#navigation > li > ul > li:hover {
 }
 #clients > ul, #vendors > ul {
 	margin-right: 5px;
-	height: calc(100vh - 200px);
+	height: calc(100vh - 198px);
 	overflow-y: auto;
 	width: 370px;
 	float: left;
@@ -178,7 +181,8 @@ ul#navigation > li > ul > li:hover {
 	width: 525px;
 	margin-left: 20px;
 	padding: 20px;
-	overflow: auto;
+	overflow: hidden;
+	word-break: break-word;
 }
 .client-vendor-information > address {
 	float: left;
@@ -432,7 +436,7 @@ div.quill-editor {
 	height: 400px;
 	overflow: auto;
 }
-#formatting-container, #task-formatting-container {
+#formatting-container, #task-formatting-container, #vendor-formatting-container {
 	background-color: #ccc;
 	border: 1px solid #777;
 	border-bottom-width: 0;
@@ -510,9 +514,19 @@ table.default-table.all td.full-row{
     top: calc(100vh - 190px);
 }
 
-.add-client-form {
+.add-client-form, .add-vendor-form {
 	display: block;
-	margin: 5px;
+	margin: 5px 0;
 	width: 155px;
 	box-sizing: border-box;
+}
+div.add-vendor-form {
+	width: 100%;
+}
+.client-vendor-information button {
+    float: right;
+	z-index: 100;
+}
+#description{
+	clear:both;
 }

@@ -237,7 +237,8 @@ switch ($call){
 				echo json_encode(true);
 				break;
 			case 'add-client':
-				$client = $db->prepare("insert into clients (name, abbr, address, `address2`, city, state, zip, url) values (:name, :abbr, :address, :address2, :city, :state, :zip, :url) on duplicate key update name=:name, abbr=:abbr, address=:address `address2`=:address2, city=:city, state=:state, zip=:zip, url=:url");
+				$client = $db->prepare("insert into clients (id, name, abbr, address, `address2`, city, state, zip, url) values (:id, :name, :abbr, :address, :address2, :city, :state, :zip, :url) on duplicate key update name=:name, abbr=:abbr, address=:address, `address2`=:address2, city=:city, state=:state, zip=:zip, url=:url");
+				$client->bindParam(':id', $_POST['id'], PDO::PARAM_INT);
 				$client->bindParam(":name", $_POST['name']);
 				$client->bindParam(":abbr", $_POST['abbr']);
 				$client->bindParam(":address", $_POST['address']);
@@ -246,6 +247,21 @@ switch ($call){
 				$client->bindParam(":state", $_POST['state']);
 				$client->bindParam(":zip", $_POST['zip']);
 				$client->bindParam(":url", $_POST['site']);
+				$client->execute();
+				echo json_encode(true);
+				break;
+			case 'add-vendor':
+				$client = $db->prepare("insert into vendors (id, name, type, address, `address2`, city, state, zip, url, notes) values (:id, :name, :type, :address, :address2, :city, :state, :zip, :url, :notes) on duplicate key update name=:name, type=:type, address=:address, `address2`=:address2, city=:city, state=:state, zip=:zip, url=:url, notes=:notes");
+				$client->bindParam(':id', $_POST['id'], PDO::PARAM_INT);
+				$client->bindParam(":name", $_POST['name']);
+				$client->bindParam(":type", $_POST['type']);
+				$client->bindParam(":address", $_POST['address']);
+				$client->bindParam(":address2", $_POST['address2']);
+				$client->bindParam(":city", $_POST['city']);
+				$client->bindParam(":state", $_POST['state']);
+				$client->bindParam(":zip", $_POST['zip']);
+				$client->bindParam(":url", $_POST['site']);
+				$client->bindParam(":notes", $_POST['notes']);
 				$client->execute();
 				echo json_encode(true);
 				break;

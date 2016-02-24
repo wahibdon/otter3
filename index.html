@@ -92,7 +92,7 @@
 	</div>
 
 	<div id="vendors">
-		<button class="addClientVendor" id="addVendor">Add Client</button>
+		<button class="addClientVendor" id="addVendor">Add Vendor</button>
 	</div>
 
 	<div id="jobs">
@@ -296,12 +296,12 @@
 	<div id="add-client">
 		<input type="hidden" value="add-client" class="add-client-form" data-type="form">
 		<input id="add-client-id" type="hidden" class="add-client-form" data-type="id">
-		<input type="text" class="add-client-form" data-type="name" placeholder="Client Name">
-		<input type="text" class="add-client-form" data-type="abbr" placeholder="Abbreviation">
-		<input type="text" class="add-client-form" data-type="address" placeholder="Address">
-		<input type="text" class="add-client-form" data-type="address2" placeholder="Address 2">
-		<input type="text" class="add-client-form" data-type="city" placeholder="City">
-		<select class="add-client-form" data-type="state">
+		<input type="text" id="add-client-name" class="add-client-form" data-type="name" placeholder="Client Name">
+		<input type="text" id="add-client-abbr" class="add-client-form" data-type="abbr" placeholder="Abbreviation">
+		<input type="text" id="add-client-address" class="add-client-form" data-type="address" placeholder="Address">
+		<input type="text" id="add-client-address2" class="add-client-form" data-type="address2" placeholder="Address 2">
+		<input type="text" id="add-client-city" class="add-client-form" data-type="city" placeholder="City">
+		<select class="add-client-form" id="add-client-state" data-type="state">
 			<option value="0" class="no-hide" selected>State</option>
 			<option value="AL">Alabama</option>
 			<option value="AK">Alaska</option>
@@ -355,12 +355,129 @@
 			<option value="WI">Wisconsin</option>
 			<option value="WY">Wyoming</option>
 		</select>
-		<input type="text" class="add-client-form" data-type="zip" placeholder="ZIP">
-		<input type="text" class="add-client-form" data-type="site" placeholder="Website">
-		<button class="submit-button" data-form="add-client-form" data-after="#clients">Save</button>
+		<input type="text" id="add-client-zip" class="add-client-form" data-type="zip" placeholder="ZIP">
+		<input type="text" id="add-client-site" class="add-client-form" data-type="site" placeholder="Website">
+		<button class="submit-button" data-form="add-client-form" data-after="clients/">Save</button>
 	</div>
 
-	<div id="add-vendor"></div>
+	<div id="add-vendor">
+		<input type="hidden" value="add-vendor" class="add-vendor-form" data-type="form">
+		<input id="add-vendor-id" type="hidden" class="add-vendor-form" data-type="id">
+		<input type="text" id="add-vendor-name" class="add-vendor-form" data-type="name" placeholder="Vendor Name">
+		<input type="text" id="add-vendor-type" class="add-vendor-form" data-type="type" placeholder="Vendor Type">
+		<input type="text" id="add-vendor-address" class="add-vendor-form" data-type="address" placeholder="Address">
+		<input type="text" id="add-vendor-address2" class="add-vendor-form" data-type="address2" placeholder="Address 2">
+		<input type="text" id="add-vendor-city" class="add-vendor-form" data-type="city" placeholder="City">
+		<select class="add-vendor-form" id="add-vendor-state" data-type="state">
+			<option value="0" class="no-hide" selected>State</option>
+			<option value="AL">Alabama</option>
+			<option value="AK">Alaska</option>
+			<option value="AZ">Arizona</option>
+			<option value="AR">Arkansas</option>
+			<option value="CA">California</option>
+			<option value="CO">Colorado</option>
+			<option value="CT">Connecticut</option>
+			<option value="DE">Delaware</option>
+			<option value="DC">District Of Columbia</option>
+			<option value="FL">Florida</option>
+			<option value="GA">Georgia</option>
+			<option value="HI">Hawaii</option>
+			<option value="ID">Idaho</option>
+			<option value="IL">Illinois</option>
+			<option value="IN">Indiana</option>
+			<option value="IA">Iowa</option>
+			<option value="KS">Kansas</option>
+			<option value="KY">Kentucky</option>
+			<option value="LA">Louisiana</option>
+			<option value="ME">Maine</option>
+			<option value="MD">Maryland</option>
+			<option value="MA">Massachusetts</option>
+			<option value="MI">Michigan</option>
+			<option value="MN">Minnesota</option>
+			<option value="MS">Mississippi</option>
+			<option value="MO">Missouri</option>
+			<option value="MT">Montana</option>
+			<option value="NE">Nebraska</option>
+			<option value="NV">Nevada</option>
+			<option value="NH">New Hampshire</option>
+			<option value="NJ">New Jersey</option>
+			<option value="NM">New Mexico</option>
+			<option value="NY">New York</option>
+			<option value="NC">North Carolina</option>
+			<option value="ND">North Dakota</option>
+			<option value="OH">Ohio</option>
+			<option value="OK">Oklahoma</option>
+			<option value="OR">Oregon</option>
+			<option value="PA">Pennsylvania</option>
+			<option value="RI">Rhode Island</option>
+			<option value="SC">South Carolina</option>
+			<option value="SD">South Dakota</option>
+			<option value="TN">Tennessee</option>
+			<option value="TX">Texas</option>
+			<option value="UT">Utah</option>
+			<option value="VT">Vermont</option>
+			<option value="VA">Virginia</option>
+			<option value="WA">Washington</option>
+			<option value="WV">West Virginia</option>
+			<option value="WI">Wisconsin</option>
+			<option value="WY">Wyoming</option>
+		</select>
+		<input type="text" id="add-vendor-zip" class="add-vendor-form" data-type="zip" placeholder="ZIP">
+		<input type="text" id="add-vendor-site" class="add-vendor-form" data-type="site" placeholder="Website">
+		<div id="vendor-content-container">
+			<div id="vendor-editor-wrapper">
+			<div id="vendor-formatting-container">
+				<select title="Font" class="ql-font">
+					<option value="sans-serif" selected>Sans Serif</option>
+					<option value="Georgia, serif">Serif</option>
+					<option value="Monaco, 'Courier New', monospace">Monospace</option>
+				</select>
+				<select title="Size" class="ql-size">
+					<option value="10px">Small</option>
+					<option value="13px" selected>Normal</option>
+					<option value="18px">Large</option>
+					<option value="32px">Huge</option>
+				</select>
+				<select title="Text Color" class="ql-color">
+					<option value="rgb(255, 255, 255)">White</option>
+					<option value="rgb(0, 0, 0)" selected>Black</option>
+					<option value="rgb(255, 0, 0)">Red</option>
+					<option value="rgb(0, 0, 255)">Blue</option>
+					<option value="rgb(0, 255, 0)">Lime</option>
+					<option value="rgb(0, 128, 128)">Teal</option>
+					<option value="rgb(255, 0, 255)">Magenta</option>
+					<option value="rgb(255, 255, 0)">Yellow</option>
+				</select>
+				<select title="Background Color" class="ql-background">
+					<option value="rgb(255, 255, 255)" selected>White</option>
+					<option value="rgb(0, 0, 0)">Black</option>
+					<option value="rgb(255, 0, 0)">Red</option>
+					<option value="rgb(0, 0, 255)">Blue</option>
+					<option value="rgb(0, 255, 0)">Lime</option>
+					<option value="rgb(0, 128, 128)">Teal</option>
+					<option value="rgb(255, 0, 255)">Magenta</option>
+					<option value="rgb(255, 255, 0)">Yellow</option>
+				</select>
+				<select title="Text Alignment" class="ql-align">
+					<option value="left" selected>Left</option>
+					<option value="center">Center</option>
+					<option value="right">Right</option>
+					<option value="justify">Justify</option>
+				</select>
+				<button title="Bold" class="ql-format-button ql-bold">Bold</button>
+				<button title="Italic" class="ql-format-button ql-italic">Italic</button>
+				<button title="Underline" class="ql-format-button ql-underline">Under</button>
+				<button title="Strikethrough" class="ql-format-button ql-strike">Strike</button>
+				<button title="Link" class="ql-format-button ql-link">Link</button>
+				<button title="Image" class="ql-format-button ql-image">Image</button>
+				<button title="Bullet" class="ql-format-button ql-bullet">Bullet</button>
+				<button title="List" class="ql-format-button ql-list">List</button>
+			</div>
+			<div id="add-vendor-editor" data-type="notes" class="add-vendor-form quill-editor"></div>
+			</div>
+		</div>
+		<button class="submit-button" data-form="add-vendor-form" data-after="vendors/">Save</button>
+	</div>
 
     <div id="add-client-contact"></div>
 
@@ -566,7 +683,7 @@
 		<input type="hidden" value="add-time" class="add-time-form" data-type="form">
 		<input type="text" class="add-time-form" data-type="job" id="add-time-job-number" placeholder="Job">
 		<select class="add-time-form" data-type="hours">
-			<option vlaue="">Hours</option>
+			<option vlaue="0">Hours</option>
 			<option value="0">0</option>
 			<option value="1">1</option>
 			<option value="2">2</option>
@@ -666,12 +783,14 @@
 			</tbody>
 		</table>
 	</div>
-	
-	<div id="add-expense"></div>
-	<div id="add-estimate"></div>
-	<div id="add-invoice"></div>
-	<div id="add-art"></div>
 
+	<div id="add-expense"></div>
+
+	<div id="add-estimate"></div>
+
+	<div id="add-invoice"></div>
+
+	<div id="add-art"></div>
 
 	<div id="login">
 		<input type="hidden" value="login" class="login-form" data-type="form">
@@ -827,9 +946,14 @@
 		});
 	});
 	document.getElementById('report-run-tfp').addEventListener('click', run_report_tfp);
-	document.getElementById('addClient').addEventListener('click', function(){showRoute('add-client')});
-	/*document.getElementById('').addEventListener('click', );
-	document.getElementById('').addEventListener('click', );*/
+	document.getElementById('addClient').addEventListener('click', function(){
+		resetForm('add-client-form');
+		window.location.hash='add-client';
+	});
+	document.getElementById('addVendor').addEventListener('click', function(){
+		resetForm('add-vendor-form');
+		window.location.hash='add-vendor';
+	});
 	var submitButtons = document.getElementsByClassName('submit-button');
 	for(var i=0;i<submitButtons.length;i++){
 		submitButtons[i].addEventListener('click', submitForm);
@@ -846,6 +970,13 @@
 	editors['add-task-editor'] = new Quill('#add-task-editor', {
 		modules: {
 			'toolbar': { container: '#task-formatting-container' },
+			'link-tooltip': true,
+			'image-tooltip': true
+		}
+	});
+	editors['add-vendor-editor'] = new Quill('#add-vendor-editor', {
+		modules: {
+			'toolbar': { container: '#vendor-formatting-container' },
 			'link-tooltip': true,
 			'image-tooltip': true
 		}
@@ -923,21 +1054,172 @@
 	}
 
 	var routes = [];
-	routes[''] = index;
-	routes['clients'] = getClients;
-	routes['vendors'] = getVendors;
+	routes[''] = function(){
+		xhr('/api/php-api.php?call=home-task-list', function(res){
+			var task_list = document.getElementById('home-tasks'),
+				tr, td, a, input;
+			emptyElement(task_list);
+			for(var i =0; i<res.length; i++){
+				console.log(res[i]);
+				tr=document.createElement('tr');
+				td = document.createElement('td');
+				a = document.createElement('a');
+				a.appendChild(document.createTextNode(res[i].abbr+res[i].number+" - "+res[i].job_title));
+				a.href="#job/"+res[i].abbr+res[i].number;
+				td.appendChild(a);
+				tr.appendChild(td);
+				td = document.createElement('td');
+				a = document.createElement('a');
+				a.appendChild(document.createTextNode(res[i].title));
+				a.href="#task/"+res[i].id;
+				td.appendChild(a);
+				tr.appendChild(td);
+				td = document.createElement('td');
+				td.appendChild(document.createTextNode(res[i].created));
+				tr.appendChild(td);
+				td = document.createElement('td');
+				td.appendChild(document.createTextNode(res[i].due));
+				tr.appendChild(td);
+				td = document.createElement('td');
+				input = document.createElement('input');
+				input.type="checkbox";
+				input.dataset.taskNumber = res[i].id;
+				input.classList.add("home-mark-done");
+				td.appendChild(input);
+				tr.appendChild(td);
+				task_list.appendChild(tr);
+			}
+			addEventToAllOfClass(document.getElementsByClassName('home-mark-done'), 'click', function(e){
+				xhr('/api/php-api.php?call=task-done&task_id='+e.target.dataset.taskNumber, function(res){
+					window.location.hash="task/"+e.target.dataset.taskNumber;
+				});
+			});
+		});
+		showRoute('index');
+		document.getElementById('loading').style.display = "none";
+	};
+	routes['clients'] = function(){
+		xhr('/api/php-api.php?call=list-clients', function(response){
+			showRoute('clients');
+			var client, list = buildClientVendor(['name', 'abbr'], response);
+			removeOldUL('clients');
+			document.getElementById('clients').appendChild(list);
+			/*if ((client = window.location.hash.substring(1).split('/')[1]) != undefined){
+				showClient(client);
+			}*/
+			try{
+				var old = document.getElementById(window.hash+'info');
+				old.parentNode.removeChild(old);
+			}catch(e){
+				//
+			}
+		});
+	};
+	routes['vendors'] = function(){
+		xhr('/api/php-api.php?call=list-vendors', function(response){
+			showRoute('vendors');
+			var vendor, list = buildClientVendor(['name'], response);
+			removeOldUL('vendors');
+			document.getElementById('vendors').appendChild(list);
+			/*if ((vendor = window.location.hash.substring(1).split('/')[1]) != undefined){
+				showVendor(vendor);
+			}*/
+			try{
+				var old = document.getElementById(window.hash+'info');
+				old.parentNode.removeChild(old);
+			}catch(e){
+				//
+			}
+		});
+	};
 	routes['jobs'] = showJobs;
-	routes['job'] = showJob;
-	routes['credentials'] = showCredentials;
-	routes['reports'] = showReports;
+	routes['job'] = function(){
+		showRoute('job');
+		var job_number = window.location.hash.substring(1).split('/')[1].match(/[0-9A-Za-z]{3}?([0-9]{5,6})/)[1];
+		xhr('/api/php-api.php?call=job&number='+job_number, function(response){
+			emptyElement([document.getElementById('client-and-number'),
+						  document.getElementById('job-title'),
+						  document.getElementById('job-status'),
+						  document.getElementById('job-type'),
+						  document.getElementById('job-creator'),
+						  //document.getElementById('job-vendor'),
+						  document.getElementById('job-contact'),
+						  document.getElementById('job-billing'),
+						  document.getElementById('job-created'),
+						  document.getElementById('job-closed')]);
+			document.getElementById('client-and-number').appendChild(document.createTextNode(response[0].name+" - "+response[0].abbr+response[0].number+" | "));
+			document.getElementById('create-task-button').dataset.jobNumber = response[0].abbr+response[0].number;
+			document.getElementById('show-tasks-button').dataset.jobNumber = response[0].number;
+			document.getElementById('job-title').appendChild(document.createTextNode(response[0].title));
+			document.getElementById('job-status').appendChild(document.createTextNode(JSTATUS[response[0].job_status]));
+			document.getElementById('job-type').appendChild(document.createTextNode(JTYPE[response[0].type]));
+			document.getElementById('job-creator').appendChild(document.createTextNode(response[0].creator));
+			//document.getElementById('job-vendor').appendChild(document.createTextNode(response[0].vendor));
+			document.getElementById('job-contact').appendChild(document.createTextNode(response[0].contact));
+			document.getElementById('job-billing').appendChild(document.createTextNode(JBILLING[response[0].billing_status]));
+			document.getElementById('job-created').appendChild(document.createTextNode(response[0].opened));
+			document.getElementById('job-closed').appendChild(document.createTextNode(response[0].closed));
+			document.getElementById('job-description').innerHTML = response[0].description;
+			document.getElementById('project-edit').dataset.information = JSON.stringify(response[0]);
+		});
+		xhr('/api/php-api.php?call=job-additional&number='+job_number, function(response){
+		console.log(response.tasks);
+			emptyElement([document.getElementById('times-body'),
+						  document.getElementById('estimate-body'),
+						  document.getElementById('expenses-body'),
+						  document.getElementById('invoices-body'),
+						  document.getElementById('art-body'),
+						  document.getElementById('tasks-body'),]);
+			//
+			createJobInfoTable(response.times, document.getElementById('times-body'), ['id', 'code', 'totaltime', response.timecodes]);
+			createJobInfoTable(response.estimates, document.getElementById('estimate-body'), ['id', 'title', 'date', 'added_by', 'amount', 'net']);
+			createJobInfoTable(response.expenses, document.getElementById('expenses-body'), ['id', 'title', 'date', 'added_by', 'cost', 'final_cost']);
+			createJobInfoTable(response.invoices, document.getElementById('invoices-body'), ['id', 'title', 'date', 'added_by', 'amount']);
+			createJobInfoTable(response.art, document.getElementById('art-body'), ['id', 'title', 'date', 'added_by']);
+			createJobInfoTable(response.tasks, document.getElementById('tasks-body'), ['id', 'task-title', 'names', 'created', 'due', 'status']);
+
+		});
+		var targets = document.getElementsByClassName('job-details-section');
+		for (var i=0; i<targets.length; i++){
+			targets[i].classList.remove('active');
+		}
+		document.getElementById('job-overview').classList.add('active');
+	};
+	routes['credentials'] = function(){
+		showRoute('credentials');
+		xhr('/api/php-api.php?call=credentials', function(response){
+			createJobInfoTable(response, document.getElementById('credentials-body'), ['id', 'site', 'username', 'password', 'notes']);
+
+		});
+	};
+	routes['reports'] = function(){
+		showRoute('reports');
+		document.getElementById('loading').style.display = "none";
+		var tcfc = document.getElementById("tcfc-client-list");
+		emptyElement(tcfc);
+		xhr('/api/php-api.php?call=list-clients', function(res){
+			var option;
+			for (var i=0; i<res.length; i++){
+				option = document.createElement('option');
+				option.value = res[i].id;
+				option.appendChild(document.createTextNode(res[i].name));
+				tcfc.appendChild(option);
+			}
+			console.log(res);
+		});
+	};
 	routes['add-job'] = function(){
 		showRoute('add-job');
 		listClients(document.getElementById('add-job-client-list'));
 		selectFromConst(JTYPE, document.getElementById('add-job-type-list'));
 		selectFromConst(JBILLING, document.getElementById('add-job-billing-list'));
-	}
-	routes['add-client'] = function(){showRoute('add-client')};
-	routes['add-vendor'] = function(){showRoute('add-vendor')};
+	};
+	routes['add-client'] = function(){
+		showRoute('add-client');
+	};
+	routes['add-vendor'] = function(){
+		showRoute('add-vendor');
+	};
 	routes['add-client-contact'] = function(){showRoute('add-client-contact')};
 	routes['add-task'] = function(){
 		if(typeof document.getElementById('create-task-button').dataset.jobNumber != 'undefined')
@@ -1207,6 +1489,7 @@
 			}
 		});
 	}
+
 	function selectFromConst(src, target){
 		var option;
 		for(var i=0; i<src.length; i++){
@@ -1219,28 +1502,12 @@
 		}
 	}
 
-	function showReports(){
-		showRoute('reports');
-		document.getElementById('loading').style.display = "none";
-		var tcfc = document.getElementById("tcfc-client-list");
-		emptyElement(tcfc);
-		xhr('/api/php-api.php?call=list-clients', function(res){
-			var option;
-			for (var i=0; i<res.length; i++){
-				option = document.createElement('option');
-				option.value = res[i].id;
-				option.appendChild(document.createTextNode(res[i].name));
-				tcfc.appendChild(option);
-			}
-			console.log(res);
-		});
-	}
-
 	function selectReport(e){
 		hideAllOfClass(document.getElementsByClassName('report-area'));
 		document.getElementById(e.target.dataset.id).style.display = "block";
 		emptyElement([document.getElementById('report-results')]);
 	}
+
 	function run_report_atr(){
 		xhr('/api/php-api.php?call=run-report&type=atr&date_start='+document.getElementById('ats_start').value+"&date_end="+document.getElementById('ats_end').value, function(res){
 			var reports_result = document.getElementById('report-results'), table, title='', thead, tr, td, th, tbody;
@@ -1284,6 +1551,7 @@
 			console.log(res);
 		});
 	}
+
 	function run_report_tfp(){
 		xhr('/api/php-api.php?call=run-report&type=tfp&job='+document.getElementById('tfp-job').value, function(res){
 			var reports_result = document.getElementById('report-results'), table, title='', thead, tr, td, th, tbody;
@@ -1327,67 +1595,6 @@
 			}
 			console.log(res);
 		});
-	}
-
-	function showCredentials(){
-		showRoute('credentials');
-		xhr('/api/php-api.php?call=credentials', function(response){
-			createJobInfoTable(response, document.getElementById('credentials-body'), ['id', 'site', 'username', 'password', 'notes']);
-
-		});
-	}
-
-	function showJob(type){
-		showRoute('job');
-		var job_number = window.location.hash.substring(1).split('/')[1].match(/[0-9A-Za-z]{3}?([0-9]{5,6})/)[1];
-		xhr('/api/php-api.php?call=job&number='+job_number, function(response){
-			emptyElement([document.getElementById('client-and-number'),
-						  document.getElementById('job-title'),
-						  document.getElementById('job-status'),
-						  document.getElementById('job-type'),
-						  document.getElementById('job-creator'),
-						  //document.getElementById('job-vendor'),
-						  document.getElementById('job-contact'),
-						  document.getElementById('job-billing'),
-						  document.getElementById('job-created'),
-						  document.getElementById('job-closed')]);
-			document.getElementById('client-and-number').appendChild(document.createTextNode(response[0].name+" - "+response[0].abbr+response[0].number+" | "));
-			document.getElementById('create-task-button').dataset.jobNumber = response[0].abbr+response[0].number;
-			document.getElementById('show-tasks-button').dataset.jobNumber = response[0].number;
-			document.getElementById('job-title').appendChild(document.createTextNode(response[0].title));
-			document.getElementById('job-status').appendChild(document.createTextNode(JSTATUS[response[0].job_status]));
-			document.getElementById('job-type').appendChild(document.createTextNode(JTYPE[response[0].type]));
-			document.getElementById('job-creator').appendChild(document.createTextNode(response[0].creator));
-			//document.getElementById('job-vendor').appendChild(document.createTextNode(response[0].vendor));
-			document.getElementById('job-contact').appendChild(document.createTextNode(response[0].contact));
-			document.getElementById('job-billing').appendChild(document.createTextNode(JBILLING[response[0].billing_status]));
-			document.getElementById('job-created').appendChild(document.createTextNode(response[0].opened));
-			document.getElementById('job-closed').appendChild(document.createTextNode(response[0].closed));
-			document.getElementById('job-description').innerHTML = response[0].description;
-			document.getElementById('project-edit').dataset.information = JSON.stringify(response[0]);
-		});
-		xhr('/api/php-api.php?call=job-additional&number='+job_number, function(response){
-		console.log(response.tasks);
-			emptyElement([document.getElementById('times-body'),
-						  document.getElementById('estimate-body'),
-						  document.getElementById('expenses-body'),
-						  document.getElementById('invoices-body'),
-						  document.getElementById('art-body'),
-						  document.getElementById('tasks-body'),]);
-			//
-			createJobInfoTable(response.times, document.getElementById('times-body'), ['id', 'code', 'totaltime', response.timecodes]);
-			createJobInfoTable(response.estimates, document.getElementById('estimate-body'), ['id', 'title', 'date', 'added_by', 'amount', 'net']);
-			createJobInfoTable(response.expenses, document.getElementById('expenses-body'), ['id', 'title', 'date', 'added_by', 'cost', 'final_cost']);
-			createJobInfoTable(response.invoices, document.getElementById('invoices-body'), ['id', 'title', 'date', 'added_by', 'amount']);
-			createJobInfoTable(response.art, document.getElementById('art-body'), ['id', 'title', 'date', 'added_by']);
-			createJobInfoTable(response.tasks, document.getElementById('tasks-body'), ['id', 'task-title', 'names', 'created', 'due', 'status']);
-
-		});
-		var targets = document.getElementsByClassName('job-details-section');
-		for (var i=0; i<targets.length; i++){
-			targets[i].classList.remove('active');
-		}
-		document.getElementById('job-overview').classList.add('active');
 	}
 
 	function createJobInfoTable(source, dest, cols){
@@ -1468,10 +1675,11 @@
 
 				}
 			}catch(e){
-				index();
+				routes['']();
 			}
 		}
 	}
+
 	setInterval(function(){
 		if (window.hash != window.location.hash.substring(1).split('/')[0]){
 			window.hash = window.location.hash.substring(1).split('/')[0];
@@ -1488,51 +1696,6 @@
 
 	}, 250);
 
-	function index(){
-		xhr('/api/php-api.php?call=home-task-list', function(res){
-			var task_list = document.getElementById('home-tasks'),
-				tr, td, a, input;
-			emptyElement(task_list);
-			for(var i =0; i<res.length; i++){
-				console.log(res[i]);
-				tr=document.createElement('tr');
-				td = document.createElement('td');
-				a = document.createElement('a');
-				a.appendChild(document.createTextNode(res[i].abbr+res[i].number+" - "+res[i].job_title));
-				a.href="#job/"+res[i].abbr+res[i].number;
-				td.appendChild(a);
-				tr.appendChild(td);
-				td = document.createElement('td');
-				a = document.createElement('a');
-				a.appendChild(document.createTextNode(res[i].title));
-				a.href="#task/"+res[i].id;
-				td.appendChild(a);
-				tr.appendChild(td);
-				td = document.createElement('td');
-				td.appendChild(document.createTextNode(res[i].created));
-				tr.appendChild(td);
-				td = document.createElement('td');
-				td.appendChild(document.createTextNode(res[i].due));
-				tr.appendChild(td);
-				td = document.createElement('td');
-				input = document.createElement('input');
-				input.type="checkbox";
-				input.dataset.taskNumber = res[i].id;
-				input.classList.add("home-mark-done");
-				td.appendChild(input);
-				tr.appendChild(td);
-				task_list.appendChild(tr);
-			}
-			addEventToAllOfClass(document.getElementsByClassName('home-mark-done'), 'click', function(e){
-				xhr('/api/php-api.php?call=task-done&task_id='+e.target.dataset.taskNumber, function(res){
-					window.location.hash="task/"+e.target.dataset.taskNumber;
-				});
-			});
-		});
-		showRoute('index');
-		document.getElementById('loading').style.display = "none";
-	}
-
 	function showRoute(route){
 		var routes = document.querySelectorAll('#otter > div');
 		for(var i=0; i<routes.length; i++){
@@ -1543,6 +1706,7 @@
 			routes[i].style.display = "none";
 		}
 	}
+
 	function jobClick(e){
 		var node = e.target;
 		while(node.nodeName != 'LI'){
@@ -1552,6 +1716,7 @@
 		var job_number = node.dataset.job_number;
 		window.location.hash = "#job/"+job_number;
 	}
+
 	function showJobs(page, search_string, search_type){
 		if (!page)
 			page = 1;
@@ -1629,24 +1794,6 @@
 		});
 	}
 
-	function getClients(){
-		xhr('/api/php-api.php?call=list-clients', function(response){
-			showRoute('clients');
-			var client, list = buildClientVendor(['name', 'abbr'], response);
-			removeOldUL('clients');
-			document.getElementById('clients').appendChild(list);
-			/*if ((client = window.location.hash.substring(1).split('/')[1]) != undefined){
-				showClient(client);
-			}*/
-			try{
-				var old = document.getElementById(window.hash+'info');
-				old.parentNode.removeChild(old);
-			}catch(e){
-				//
-			}
-		});
-	}
-
 	function removeOldUL(type){
 		var oldul;
 		if(oldul = document.querySelectorAll("#"+type+" > ul")){
@@ -1654,24 +1801,6 @@
 				oldul[i].parentNode.removeChild(oldul[i]);
 			}
 		}
-	}
-
-	function getVendors(){
-		xhr('/api/php-api.php?call=list-vendors', function(response){
-			showRoute('vendors');
-			var vendor, list = buildClientVendor(['name'], response);
-			removeOldUL('vendors');
-			document.getElementById('vendors').appendChild(list);
-			/*if ((vendor = window.location.hash.substring(1).split('/')[1]) != undefined){
-				showVendor(vendor);
-			}*/
-			try{
-				var old = document.getElementById(window.hash+'info');
-				old.parentNode.removeChild(old);
-			}catch(e){
-				//
-			}
-		});
 	}
 
 	function showClientVendor(e){
@@ -1684,32 +1813,108 @@
 				//
 			}
 			var main_div = document.createElement('div'),
-			name = document.createElement('h2'),
-			type_abbr = document.createElement('h3'),
-			notes = document.createElement('p'),
-			address = document.createElement('address'), assemble_addr='';
+				name = document.createElement('h2'),
+				type_abbr = document.createElement('h3'),
+				notes = document.createElement('p'),
+				address = document.createElement('address'),
+				assemble_addr='',
+				website = document.createElement('a'),
+				cvtype = window.hash.substr(0, window.hash.length-1),
+				button = document.createElement('button'),
+				span;
+			button.appendChild(document.createTextNode('Edit'));
+			button.dataset.id=e.target.dataset.id;
+			button.addEventListener('click', function(e){
+				if (cvtype == "vendor"){
+					document.getElementById('add-vendor-id').value = e.target.dataset.id;
+					document.getElementById('add-vendor-name').value = document.getElementById('vendor-name').innerText;
+					document.getElementById('add-vendor-type').value = document.getElementById('vendor-type_abbr').innerText;
+					document.getElementById('add-vendor-address').value = document.getElementById('vendor-address').innerText;
+					document.getElementById('add-vendor-address2').value = !!document.getElementById('vendor-address2') ? document.getElementById('vendor-address2').innerText : '';
+					document.getElementById('add-vendor-city').value = document.getElementById('vendor-city').innerText;
+					document.getElementById('add-vendor-state').value = document.getElementById('vendor-state').innerText;
+					document.getElementById('add-vendor-zip').value = document.getElementById('vendor-zip').innerText;
+					document.getElementById('add-vendor-site').value = document.getElementById('vendor-website').innerText;
+					editors['add-vendor-editor'].setHTML(document.getElementById('vendor-notes').innerHTML);
+					window.location.hash='add-vendor';
+				}else if(cvtype == "client"){
+					document.getElementById('add-client-id').value = e.target.dataset.id;
+					document.getElementById('add-client-name').value = document.getElementById('client-name').innerText;
+					document.getElementById('add-client-abbr').value = document.getElementById('client-type_abbr').innerText;
+					document.getElementById('add-client-address').value = document.getElementById('client-address').innerText;
+					document.getElementById('add-client-address2').value = !!document.getElementById('client-address2') ? document.getElementById('client-address2').innerText : '';
+					document.getElementById('add-client-city').value = document.getElementById('client-city').innerText;
+					document.getElementById('add-client-state').value = document.getElementById('client-state').innerText;
+					document.getElementById('add-client-zip').value = document.getElementById('client-zip').innerText;
+					document.getElementById('add-client-site').value = document.getElementById('client-website').innerText;
+					window.location.hash='add-client';
+				}
+			});
+			main_div.appendChild(button);
 			main_div.classList.add('client-vendor-information');
 			main_div.id = window.hash+"info";
 			main_div.appendChild(name);
 			main_div.appendChild(type_abbr);
 			main_div.appendChild(address);
+			main_div.appendChild(website);
 			main_div.appendChild(notes);
 			notes.classList.add('notes');
 			document.getElementById(window.hash).appendChild(main_div);
 			name.appendChild(document.createTextNode(row.name));
-			if (row.type)
+			name.id = cvtype+"-name";
+			if (row.type){
 				type_abbr.appendChild(document.createTextNode(row.type));
-			else
+			}else{
 				type_abbr.appendChild(document.createTextNode(row.abbr));
-			assemble_addr+=row.address+"<br>";
-			if(row.address2 != '')
-				assemble_addr+=row.address2+"<br>";
-			assemble_addr+=row.city+"<br>"+row.state+"<br>"+row.zip;
-			if(row.phone)
-				assemble_addr+="<br>"+row.phone;
-			address.innerHTML = assemble_addr;
+			}
+			type_abbr.id = cvtype+"-type_abbr";
+			span=document.createElement('span');
+			span.id=cvtype+"-address";
+			span.appendChild(document.createTextNode(row.address));
+			address.appendChild(span);
+			address.appendChild(document.createElement('br'));
+			//assemble_addr+=row.address+"<br>";
+			if(row.address2 != ''){
+				span=document.createElement('span');
+				span.id=cvtype+"-address2";
+				span.appendChild(document.createTextNode(row.address2));
+				address.appendChild(span);
+				address.appendChild(document.createElement('br'));
+				//assemble_addr+=row.address2+"<br>";
+			}
+			span=document.createElement('span');
+			span.id=cvtype+"-city";
+			span.appendChild(document.createTextNode(row.city));
+			address.appendChild(span);
+			address.appendChild(document.createElement('br'));
+			span=document.createElement('span');
+			span.id=cvtype+"-state";
+			span.appendChild(document.createTextNode(row.state));
+			address.appendChild(span);
+			address.appendChild(document.createElement('br'));
+			span=document.createElement('span');
+			span.id=cvtype+"-zip";
+			span.appendChild(document.createTextNode(row.zip));
+			address.appendChild(span);
+			//assemble_addr+=row.city+"<br>"+row.state+"<br>"+row.zip;
+			if(row.phone){
+				span=document.createElement('span');
+				span.id=cvtype+"-phone";
+				span.appendChild(document.createTextNode(row.phone));
+				address.appendChild(span);
+				address.appendChild(document.createElement('br'));
+				//assemble_addr+="<br>"+row.phone;
+			}
+			//address.innerHTML = assemble_addr;
+			//address.id = cvtype+"-address";
+			if(row.url){
+				website.href=row.url;
+				website.appendChild(document.createTextNode(row.url));
+			}
+			website.id = cvtype+"-website";
 			if(row.notes)
 				notes.innerHTML=row.notes;
+			notes.id = cvtype+"-notes";
 			var div = document.createElement('div');
 			div.classList.add('contact-list');
 			var p, contact = "";
@@ -1742,7 +1947,6 @@
 		}
 		return ul;
 	}
-
 
 	//simple xhr abstraction.
 	function xhr(url, callback, type, params) {
@@ -1782,11 +1986,13 @@
 				element[list].appendChild(reserve[e]);
 		}
 	}
+
 	function addEventToAllOfClass(collection, event_type, callback){
 		for(var i=0; i<collection.length; i++){
 			collection[i].addEventListener(event_type, callback);
 		}
 	}
+
 	function hideAllOfClass(collection){
 		for(var i = 0; i<collection.length; i++){
 			collection[i].style.display = "none";
